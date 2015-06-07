@@ -124,7 +124,9 @@ Edit the /etc/denyhosts.conf file for configuation changes
 
 
 
+## iptables
 
+Some useful guideline include [this](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/4/html/Security_Guide/s1-firewall-ipt-fwd.html).
 
 
 ## Port forwarding
