@@ -150,7 +150,9 @@ iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE
 
 The rule uses the NAT packet matching table (`-t nat`) and specifies the built-in POSTROUTING chain for NAT (`-A POSTROUTING`) on the firewall's external networking device (`-o eth0`).
 
+## list of all hosts in local network
 
+Use the `nmap -sP 192.168.1.*` command, which basically ping all hosts.
 
 
 
