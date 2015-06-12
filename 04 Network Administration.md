@@ -154,6 +154,37 @@ The rule uses the NAT packet matching table (`-t nat`) and specifies the built-i
 
 Use the `nmap -sP 192.168.1.*` command, which basically ping all hosts.
 
+## Adding a ethernet adapter on a compute node to access Internet
+
+It could be as simple as this:
+
+```
+[root@biocluster /]$ rocks add host interface compute-0-0 iface=eth1 subnet=public2 name=compute-0-0-public ip=128.125.248.230
+```
+
+However, in my case, since the new IP is not in the same subnet as the IP of the frontend, I have to create a new subnet to make this work:
+
+```
+[root@biocluster /home/kaiwang]$ rocks add network public2 128.125.248.0 255.255.254.0 
+[root@biocluster /home/kaiwang]$ rocks list network
+NETWORK  SUBNET         NETMASK         MTU    DNSZONE     SERVEDNS
+ipoib:   192.168.1.0    255.255.255.0   65520  ipoib       True    
+private: 10.1.1.0       255.255.255.0   1500   local       True    
+public:  68.181.163.128 255.255.255.128 1500   med.usc.edu False   
+public2: 128.125.248.0  255.255.254.0   1500   public2     False   
+[root@biocluster /home/kaiwang]$ rocks remove host interface compute-0-0 eth1
+[root@biocluster /home/kaiwang]$ rocks add host interface compute-0-0 iface=eth1 subnet=public2 name=compute-0-0-public ip=128.125.248.230
+```
+
+
+
+
+
+
+
+
+
+
 
 
 
