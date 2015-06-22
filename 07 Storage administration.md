@@ -112,5 +112,42 @@ or
 
 
 
+# XFS volume repair
 
+When the system shows IO error, one cannot read/write from the /export directory any more. Umounting and re-mounting shows "mount: strcuture needs cleaning" message. Restarting the computer did not help either. Therefore, we attempated xfs_repair to fix this problem.
+
+```
+[root@nas-0-1 ~]# xfs_repair /dev/mapper/nas--0--1-export
+Phase 1 - find and verify superblock...
+Phase 2 - using internal log
+        - zero log...
+ERROR: The filesystem has valuable metadata changes in a log which needs to
+be replayed.  Mount the filesystem to replay the log, and unmount it before
+re-running xfs_repair.  If you are unable to mount the filesystem, then use
+the -L option to destroy the log and attempt a repair.
+Note that destroying the log may cause corruption -- please attempt a mount
+of the filesystem before doing this.
+[root@nas-0-1 ~]# mount /export/
+mount: Structure needs cleaning
+[root@nas-0-1 ~]# mount /export 
+mount: Structure needs cleaning
+[root@nas-0-1 ~]# xfs_repair -L /dev/mapper/nas--0--1-export
+Phase 1 - find and verify superblock...
+Phase 2 - using internal log
+        - zero log...
+ALERT: The filesystem has valuable metadata changes in a log which is being
+destroyed because the -L option was used.
+        - scan filesystem freespace and inode maps...
+agi unlinked bucket 6 is 26403654 in ag 0 (inode=26403654)
+sb_icount 17162816, counted 34859264
+sb_ifree 125, counted 1683
+sb_fdblocks 69126412932, counted 60959141713
+        - found root inode chunk
+Phase 3 - for each AG...
+        - scan and clear agi unlinked lists...
+        - process known inodes and perform inode discovery...
+        - agno = 0
+data fork in ino 2425892 claims free block 6063805942
+data fork in ino 2425892 claims free block 6063805943
+```
 
