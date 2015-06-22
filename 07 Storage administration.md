@@ -151,3 +151,4 @@ data fork in ino 2425892 claims free block 6063805942
 data fork in ino 2425892 claims free block 6063805943
 ```
 
+The XFS FAQ provides excellent guide: http://xfs.org/index.php/XFS_FAQ
