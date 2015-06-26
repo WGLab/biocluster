@@ -1,12 +1,17 @@
+# Hard drive selection
+
+If you are building a NAS for heavy I/O work (since each compute node will need to access this NAS, and all user home directory is stored here), make sure to use enterprise grade drives, such as Seagate Constellation or WD Re drives. If you are building a NAS for occasional data back up and storage, then a drive designed for NAS can be used, such as WD Red drives. Just do not buy any drive for desktop applications, such as Seagate Burracuda.
+
 # Storage administration
 
 MegaRaid Hardware information
 Biocluster head node has 9260-8i. nas-0-0 has 9260-4i. bionas2 has 9271-4i.
+
 System status information
 http://mycusthelp.info/LSI/_cs/AnswerDetail.aspx?sSessionID=&aid=8264
 use “./lsiget.sh” to generate the tar.gz file and send to SM.
 
-MegaCli
+# MegaCli
 MegaCli installation
 Download the program from http://www.lsi.com/support/Pages/download-results.aspx?keyword=megacli
 By default, MegaCli is installed at /opt/MegaRAID/MegaCli/MegaCli64
@@ -152,3 +157,27 @@ data fork in ino 2425892 claims free block 6063805943
 ```
 
 The XFS FAQ provides excellent guide: http://xfs.org/index.php/XFS_FAQ
+
+# Clear RAID information from hard drive
+
+If you insert an old hard drive into a compute node, yet the hard drive may previously be part of a RAID array, Rocks will refuse to install operating system into the drive. There are no commands in Rocks that can override this decision.
+
+If you encounter this situation, that is, during Rocks installation in a compute node, a screen shows up telling you that the drive has RAID information, you can use the following procedure to wipe out RAID information from the hard drive:
+
+First, just press Ctrl+Alt+F5 (or maybe F6 or F4) to switch to a text terminal from GUI terminal, then do
+
+`blockdev --getsz /dev/sda` to get the size of drive. You can also do `cat /proc/partitions` to get the size of the drive in blocks.
+
+Now we need to wipe the first 20 blocks and last 20 blocks from the drive:
+
+```
+dd if=/dev/zero of=/dev/sda count=20
+dd if=/dev/zero of=/dev/sda seek=xxxx count=20
+```
+
+The command seeks to 20 blocks before the total block size (so you'll need to do some simple math).
+
+Then use Ctrl+Alt+F1 (or maybe F2 or F3) to switch to GUI and press enter. Then Rocks will install.
+
+
+
