@@ -267,10 +267,11 @@ You can find these in $SGE_ROOT/<cell>/common/
 
 If your cell is the usual "default" then all you need to do is:
 
-# cd $SGE_ROOT/default/common/
-
-# ./sgemaster start
-# ./sgeexecd start
+```
+cd $SGE_ROOT/default/common/
+./sgemaster start
+./sgeexecd start
+```
 
 Before you restart the master, make sure you don't have any old  
 sge_qmaster or sge_schedd processes hanging around.
@@ -282,6 +283,31 @@ There are two types of fair shares: share tree versus functional.
 >>
 >>    2. Make 1 change in the SGE scheduler configuration ('qconf -msconf'):
 >>           * weight_tickets_functional 10000
+
+
+
+## Very useful tricks
+
+* Restart a failed job
+
+If you job fails in a node (the node should show up as 'au' status in qstat), you can restart the job in a different node. First, alter the job to be restartable, then submit it again.
+
+```
+qalter -r y <jobid>
+qmod -r <jobid>
+```
+
+You will see that the status of the job becomes "Rq", and soon it will be submitted to a different node.
+
+* Clear error for a job
+
+Sometimes you will see that a job is at "Eqw" state in qstat. This is due to errors in running the job, usually due to NFS error in the node in my experience. If you fixed the error, you can clear the error message by `qmod -cj <jobid>`, and the job will be submitted again.
+
+
+
+
+
+
 
 
 
