@@ -303,7 +303,9 @@ You will see that the status of the job becomes "Rq", and soon it will be submit
 
 Sometimes you will see that a job is at "Eqw" state in qstat. This is due to errors in running the job, usually due to NFS error in the node in my experience. If you fixed the error, you can clear the error message by `qmod -cj <jobid>`, and the job will be submitted again.
 
+* Change priority of a job
 
+Use `qlater -p <priority> <jobid>` to change the priority of a job. The valid range is -1024 to 1023. Lower number means lower priority. Regular users can only lower the priority. This applies only to queued jobs, not running jobs.
 
 
 
