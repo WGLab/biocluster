@@ -154,39 +154,26 @@ qmod -e all.q@compute-0-4
 
 ##job status
 
-'au' simply means that Grid Engine is likely not running on the node.  
-The "a" means 'alarm' and the "u" means unheard/unreachable. The  
-combination of the two more often than not means that SGE is not  
-running on the compute node.
+'au' simply means that Grid Engine is likely not running on the node. The "a" means 'alarm' and the "u" means unheard/unreachable. The combination of the two more often than not means that SGE is not running on the compute node.
 
-E is a worse state to see. It means that there was a major problem on  
-the compute node (with the system or the job itself). SGE  
-intentionally marked the queue as state "E" so that other jobs would  
-not run into the same bad problem.
+E is a worse state to see. It means that there was a major problem on the compute node (with the system or the job itself). SGE intentionally marked the queue as state "E" so that other jobs would not run into the same bad problem.
 
-E states do not go away automatically, even if you reboot the  
-cluster. Once you think the cluster is fine you can use the "qmod"  
-command to clear the E state.
+E states do not go away automatically, even if you reboot the cluster. Once you think the cluster is fine you can use the "qmod" command to clear the E state.
 
 host status
-'au' - Host is in alarm and unreachable,
-'u' - Host is unreachable. Usually SGE is down or the machine is down. Check this out.
-'a' - Host is in alarm. It is normal on if the state of the node is full, it means, if on the node is using most of its resources.
-'aS' - Host is in alarm and Suspended. If the node is using most of its resources, SGE suspends this node to take any other job unless resources are available.
-'d' - Host is disabled,
-'E' - ERROR. This requires the command `qmod -c` to clear the error state.
-
-
-
-
+- 'au' - Host is in alarm and unreachable,
+- 'u' - Host is unreachable. Usually SGE is down or the machine is down. Check this out.
+- 'a' - Host is in alarm. It is normal on if the state of the node is full, it means, if on the node is using most of its resources.
+- 'aS' - Host is in alarm and Suspended. If the node is using most of its resources, SGE suspends this node to take any other job unless resources are available.
+- 'd' - Host is disabled,
+- 'E' - ERROR. This requires the command `qmod -c` to clear the error state.
 
 ## When job is in dr state
 
-Force shutdown of a job
-When deleting a job, sometimes a "dr" will show up, indicating that the job is not running correctly and cannot be easily deleted. In this case, log in as "su", then "qdel <jobid>" to delete the job forcefully. 
-I found that even after doing that, I still cannot access the node by ssh, or submit a job to the node by ssh.
-In that case, I log into the node using "su", then type "shutdown -r now", and check what happens after rebooting. It seems to be working fine now after rebooting.
-when node is in E state
+When deleting a job, sometimes a "dr" will show up, indicating that the job is not running correctly and cannot be easily deleted. In this case, log in as "su", then "qdel <jobid>" to delete the job forcefully. If it does not work, do "qdel -f <jobid>" to delete the job.
+
+## when node is in E state
+
 re-install the node, then clear the Error log:
 
 ```
@@ -195,31 +182,13 @@ root@biocluster.med.usc.edu changed state of "all.q@compute-0-2.local" (no error
 ```
 See more explanations here: http://www.gridengine.info/2008/01/20/understanding-queue-error-state-e/
 
+When machine restarts yet nodes are still full, use `qstat -u "*"` to show whose jobs are in dr state, then qdel these jobs
 
-when machine restarts yet nodes are still full
-qstat -u "*"
-to show whose jobs are in dr state, then qdel these jobs
+## Check error messages from SGE
 
-Check error messages from SGE
 less /opt/gridengine/default/spool/qmaster/messages
 
-AU state versus E state
-
-'au' simply means that Grid Engine is likely not running on the node.  
-The "a" means 'alarm' and the "u" means unheard/unreachable. The  
-combination of the two more often than not means that SGE is not  
-running on the compute node.
-
-E is a worse state to see. It means that there was a major problem on  
-the compute node (with the system or the job itself). SGE  
-intentionally marked the queue as state "E" so that other jobs would  
-not run into the same bad problem.
-
-E states do not go away automatically, even if you reboot the  
-cluster. Once you think the cluster is fine you can use the "qmod"  
-command to clear the E state.
-
-
+## Restart SGE
 
 You can find these in $SGE_ROOT/<cell>/common/
 
@@ -233,7 +202,10 @@ cd $SGE_ROOT/default/common/
 
 Before you restart the master, make sure you don't have any old  
 sge_qmaster or sge_schedd processes hanging around.
-Fair share policy
+
+
+## Fair share policy
+
 There are two types of fair shares: share tree versus functional.
 >>    1. Make 2 changes in the main SGE configuration ('qconf -mconf'):
 >>           * enforce_user auto
