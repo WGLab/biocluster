@@ -83,8 +83,6 @@ Now run the example command below to confirm:
 `~kaiwang/usr/kaibin/bin/repeat_jobs.pl 1-20 'echo "sleep 120" | qsub -cwd -V -l hostname=compute-0-0' -r`
 If default is 4G, and if the resource is 48G at compute-0-0, then only 12 jobs can be run, and 8 jobs will be put into waiting list.
 
-However, I found that when I run “qlogin -l h_vmem=8G”, it says requested resources cannot be allocated. I checked “qstat -F h_vmem” and it seems that each host has only 4G h_vmem. This is strange. I used “qconf -mq all.q”, and found that the h_vmem is set at 4G (for unknown reasons). I changed this to INFINITY, and things began to work fine now.
-
 ## Configuration of parallel environment
 
 check parameters of a pe
