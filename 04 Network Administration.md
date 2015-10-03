@@ -176,6 +176,22 @@ public2: 128.125.248.0  255.255.254.0   1500   public2     False
 [root@biocluster /home/kaiwang]$ rocks add host interface compute-0-0 iface=eth1 subnet=public2 name=compute-0-0-public ip=128.125.248.230
 ```
 
+A further complication is that typically default gateway for any network is the head node. However, head node may have iptables that disable any other node to access the internet. In these cases, one need to change the default gateway for eth1 to something else.
+
+Use `rocks list host route compute-0-0` to check what's the current gateway. It is clear that head node (10.1.1.1) is the default.
+
+```
+bioinform2: 68.181.163.131  255.255.255.255 10.1.1.1 G     
+```
+
+Now do this:
+```
+[root@biocluster /]$ rocks add host route compute-0-0 0.0.0.0 128.125.249.254 netmask=0.0.0.0
+[root@biocluster /]$ rocks sync host network compute-0-0
+```
+
+Now compute-0-0 can access internet directly through eth1.
+
 
 
 
