@@ -1,12 +1,23 @@
 # Network Administration
 
-## Useful command line
+## Introduction
 
-Find all network devices in the network that connects to this machine:
+Network configuration and administration is a complex topic. In this section, I mostly describe those administrative tasks that are important yet unique for Rocks cluster operating system. I also give some tricks and tips for troubleshooting the system and for accomplishing common tasks.
 
-```
+## Useful command line tricks
+
+* Find all network devices in the network that connects to this machine:
+
+    ```
 [root@biocluster ~]# arp -a| sort
-```
+    ```
+
+
+
+
+## Configuration files
+
+There are several configuration files for enabling network in a host machine, and they are present in all Linux system. These files includ `/etc/resolv.conf` which gives name server information, `/etc/hosts` which gives host information (as they may not be in name server), `/etc/sysconfig/network-scripts/ifcfg-eth0` for configuring network interface.
 
 Typical configuration files
 
