@@ -205,7 +205,21 @@ Now compute-0-0 can access internet directly through eth1.
 
 
 
+##Adding firewall
 
+```
+rocks list host firewall compute-0-0
+RULENAME            SERVICE PROTOCOL ACTION CHAIN NETWORK OUTPUT-NETWORK FLAGS                    COMMENT CATEGORY
+A15-ALL-LOCAL       all     all      ACCEPT INPUT ------- -------------- -i lo                    ------- global  
+A20-ALL-PRIVATE     all     all      ACCEPT INPUT private -------------- ------------------------ ------- global  
+A20-SSH-PUBLIC      ssh     tcp      ACCEPT INPUT public  -------------- -m state --state NEW     ------- global  
+A30-RELATED-PUBLIC  all     all      ACCEPT INPUT public  -------------- -m state --state RELATED ------- global  
+R900-PRIVILEGED-TCP all     tcp      REJECT INPUT public  -------------- --dport 0:1023           ------- global  
+R900-PRIVILEGED-UDP all     udp      REJECT INPUT public  -------------- --dport 0:1023           ------- global  
+
+rocks add firewall host=compute-0-0 network=public2 service=50030 chain=INPUT action=ACCEPT rulename=A40-PUBLIC-HADOOP-50030 protocol=all
+rocks sync host firewall compute-0-0
+```
 
 
 
