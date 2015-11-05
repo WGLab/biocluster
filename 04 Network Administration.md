@@ -217,10 +217,11 @@ A30-RELATED-PUBLIC  all     all      ACCEPT INPUT public  -------------- -m stat
 R900-PRIVILEGED-TCP all     tcp      REJECT INPUT public  -------------- --dport 0:1023           ------- global  
 R900-PRIVILEGED-UDP all     udp      REJECT INPUT public  -------------- --dport 0:1023           ------- global  
 
-rocks add firewall host=compute-0-0 network=public2 service=50030 chain=INPUT action=ACCEPT rulename=A40-PUBLIC-HADOOP-50030 protocol=all
+rocks add firewall host=compute-0-0 network=public2 service=50030 chain=INPUT action=ACCEPT rulename=A40-PUBLIC-HADOOP-50030 protocol=tcp
 rocks sync host firewall compute-0-0
 ```
 
+Note that the protocol must be `tcp`, not `all`, for the command to work.
 
 ## Removing firewall
 
