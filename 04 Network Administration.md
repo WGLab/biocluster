@@ -222,8 +222,11 @@ rocks sync host firewall compute-0-0
 ```
 
 
+## Removing firewall
 
-
+```
+rocks remove firewall host=compute-0-0 rulename=A40-PUBLIC-HADOOP-50030
+```
 
 
 
