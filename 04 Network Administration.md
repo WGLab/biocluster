@@ -228,7 +228,16 @@ rocks sync host firewall compute-0-0
 rocks remove firewall host=compute-0-0 rulename=A40-PUBLIC-HADOOP-50030
 ```
 
+## iptables directly
+
+You must specify protocol (as tcp or udp) for the command to work. Otherwise, the `--dport` argument cannot be recognized.
 
 
+```
+[root@biocluster /home/kaiwang]$ iptables -A INPUT -p all -i eth1 --dport 50030 -j ACCEPT
+iptables v1.4.7: unknown option `--dport'
+Try `iptables -h' or 'iptables --help' for more information.
+[root@biocluster /home/kaiwang]$ iptables -A INPUT -p tcp -i eth1 --dport 50030 -j ACCEPT
+```
 
 
