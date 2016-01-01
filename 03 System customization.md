@@ -6,15 +6,16 @@ First check the hardware clock with the following command.
 hwclock --show    
 ```
 
-If your hardware clock is not set to your local time, then you must set the system time to local time. As root,
+If your hardware clock is not set to your local time, then you must set the system time to local time as root.
 
-Update via NTP: If you installed the ntp package you can: 
+If you installed the ntp package you can: 
 
 ```
 ntpdate pool.ntp.org
 ```
 
 -or- 
+
 Manual update: 
 
 ```
@@ -29,5 +30,5 @@ Now as root, synchronize the hardware clock to the current system time as local 
 hwclock --systohc --localtime
 ```
 
-Now the hardware clock is readjusted to the system time and both now point to the local time.
+Now the hardware clock is re-adjusted to the system time and both now point to the local time.
 
