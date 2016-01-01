@@ -1,5 +1,4 @@
-## Misc Linux configuration
+## Introduction
 
-There are some tasks that are misc configuration tasks that applies to any CentOS based Linux systems, and we list them here for interested users.
+There are also many miscellaneous Linux configuration tasks that applies to any CentOS system and are not necessarily Rocks specific. We describe some of them here as reference.
 
-For example, changing system time. See <http://docs.slackware.com/howtos:hardware:syncing_hardware_clock_and_system_local_time> for examples
