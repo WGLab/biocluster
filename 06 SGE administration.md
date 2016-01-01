@@ -1,8 +1,6 @@
-# SGE administration
-
 ## Introduction
 
-Sun Grid Engine. Users should use use qmon (configure SGE by GUI) and qconf (configure SEG by command line) to configure SGE.
+Sun Grid Engine. Users should use use `qmon` (configure SGE by GUI) and `qconf` (configure SEG by command line) to configure SGE.
 
 ## Detailed Reference
 
