@@ -1,11 +1,12 @@
 ## Organization of the cluster
-A typical cluster is composed of a head node (by default, it is called frontend), a storage node (by default, the storage node is the head node), and multiple compute nodes. See below for a diagram.
+
+Biocluster runs the [Rocks cluster management system](http://www.rocksclusters.org), which is based on CentOS. A typical Rocks cluster is composed of a head node (by default, it is called frontend), a storage node (by default, the storage node is the head node), and multiple compute nodes. See below for a diagram.
 
 ![cluster](/img/cluster.png)
 
 These eth0 port in these six machines are connected by a ethernet network switch, which is called network-0-0. The head node is also connected to Internet via eth1.
 
-Users log into head node, and submit jobs from the head node. These jobs are executed in compute nodes. All user data are stored in storage node.
+Users log into head node from eth1, and submit jobs from the head node by [Sun Grid Engine](https://en.wikipedia.org/wiki/Oracle_Grid_Engine), which is a job queueing system. These jobs are executed in compute nodes. All user data and files are stored in storage node, and can be accessed by compute nodes or head node by NFS.
 
 ## Adding high-speed network
 
