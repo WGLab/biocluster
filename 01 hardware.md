@@ -1,5 +1,3 @@
-# Hardware
-
 ## Organization of the cluster
 A typical cluster is composed of a head node (by default, it is called frontend), a storage node (by default, the storage node is the head node), and multiple compute nodes. See below for a diagram.
 
