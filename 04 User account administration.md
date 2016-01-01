@@ -6,15 +6,15 @@
 
 Standard procedure for adding a new user
 1. login by “su -”
-2. useradd -c “Hong Sun” -g “col” hongsun
+2. useradd -c “Kai Wang” -g “col” kaiwang
 3. rocks sync users
-4. passwd hongsun
-5. log in, make sure directory is fine
+4. passwd kaiwang
+5. log in, make sure that everything is fine
 
 the current gid and uid information for all users can be accessed in the /etc/passwd file.
 
 
-troubleshooting: once I add the new account pandiyan, the home directory cannot be accessed, and the /etc/passwd file shows "pandiyan:x:516:518:Pandiyan:/mnt/nas-0-0/home/pandiyan:/bin/bash". I suspect that there is an issue with automount, so I did "service restart autofs", then do "usermod -d /home/pandiyan pandiyan ", and then everything returns normal.
+* Troubleshooting: once I add the new account panda, the home directory cannot be accessed, and the /etc/passwd file shows "panda:x:516:518:Pandiyan:/mnt/nas-0-0/home/panda:/bin/bash". I suspect that there is an issue with automount, so I did "service restart autofs", then do "usermod -d /home/panda panda", and then everything returns normal.
 
 - add a group
 [root@biocluster ~]# groupadd wanglab
