@@ -17,30 +17,27 @@ The NAS is a basically a compute box with many hard drives. Typical set up are 3
 
 The instructions below refer to LSI controllers.
 
-MegaRaid Hardware information
+## MegaRaid Hardware information
 
-System status information
-http://mycusthelp.info/LSI/_cs/AnswerDetail.aspx?sSessionID=&aid=8264
-use “./lsiget.sh” to generate the tar.gz file and send to SM.
+System status information can be collected using lsiget command, which is available at  http://mycusthelp.info/LSI/_cs/AnswerDetail.aspx?sSessionID=&aid=8264.
 
 ## MegaCli
 
-MegaCli installation
-Download the program from http://www.lsi.com/support/Pages/download-results.aspx?keyword=megacli
-By default, MegaCli is installed at /opt/MegaRAID/MegaCli/MegaCli64
+* MegaCli installation
+    Download the program from http://www.lsi.com/support/Pages/download-results.aspx?keyword=megacli. By default, MegaCli is installed at /opt/MegaRAID/MegaCli/MegaCli64
 
-MegaCli command line reference
-Use the following command to print complete help message:
-/opt/MegaRAID/MegaCli/MegaCli64 -h
+* MegaCli command line reference
 
-The following link has more detailed description:
-http://mycusthelp.info/LSI/_cs/AnswerPreview.aspx?sSessionID=&inc=8040
+    Use the following command to print complete help message: `/opt/MegaRAID/MegaCli/MegaCli64 -h`
 
-MegaCli cheat sheet
-http://erikimh.com/megacli-cheatsheet/
-http://genuxation.com/wiki/index.php/MegaCLI
-https://supportforums.cisco.com/docs/DOC-16309
-lsi.sh script https://calomel.org/megacli_lsi_commands.html 
+    The following link has more detailed description: http://mycusthelp.info/LSI/_cs/AnswerPreview.aspx?sSessionID=&inc=8040
+
+* MegaCli cheat sheet
+
+    http://erikimh.com/megacli-cheatsheet/
+    http://genuxation.com/wiki/index.php/MegaCLI
+    https://supportforums.cisco.com/docs/DOC-16309
+    lsi.sh script https://calomel.org/megacli_lsi_commands.html 
 
 ## Essential commands to use in a new system
 ```
