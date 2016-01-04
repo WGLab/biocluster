@@ -44,6 +44,50 @@ R is a statistical computing language that is commonly used in bioinformatics. H
 <package>libstdc++-devel</package>
 ```
 
+## Set up infiniband network
+
+Many infiniband switches have built-in subnet manager, which can manage the fabric automatically and ensure proper communications between the IB hosts. Just in case the IB switch does not have this functionality, you need to install a subnet manager in one of the nodes in the network. I recommend that you should install it in the storage node `nas-0-0`, because it is typically the most stable host in the entire network. Just do a `rocks add host attr nas-0-0 subnetmanager true` and then `rocks sync config`.
+
+After installation of compute nodes, you need to manually set up the network for infiniband. Note that you should not edit the typical files such as `/etc/sysconfig/network-scripts/ifcfg-ib0`; it may work to configure the network, but it will not survive the next re-installation of the compute node. More explanation is given in [this section](05 Network administration.md). To ensure that the network information is stored within the central MySQL database in head node, you must use Rocks system command. An example is given below:
+
+```
+rocks add host interface compute-0-4 ib0
+rocks set host interface ip compute-0-4 iface=ib0 ip=192.168.1.249
+rocks set host interface subnet compute-0-4 iface=ib0 subnet=ipoib
+rocks set host interface name compute-0-4 iface=ib0 name=compute-0-4-ib
+rocks sync config
+rocks sync host network compute-0-4
+```
+
+## Setting up parallel environment
+
+By default, Rocks does not provide a smp parallel environment for software tools that can leverage multiple cores in the same machine. I do not understand why, but this is how to address this problem:
+
+First, edit a `pe.txt` file:
+
+```
+pe_name           smp
+slots             9999
+user_lists        NONE
+xuser_lists       NONE
+start_proc_args   /bin/true
+stop_proc_args    /bin/true
+allocation_rule   $pe_slots
+control_slaves    FALSE
+job_is_first_task TRUE
+urgency_slots     min
+accounting_summary FALSE
+```
+
+Then run `qconf -Ap pe.txt` as root. Now smp can be used as a PE in the qsub argument (`qsub -pe smp`). Alternatively, I found that it is easier to just type `qconf -ap smp` to edit a default file directly and then save this file.
+
+Next thing is to add the new PE smp into the `all.q` queue. Please do the following as root on the head node:
+
+```
+qconf -mq all.q
+```
+
+This will open an interactive vi session. Look for the `pe_list` line, and add `smp` to that line. Save the file and exit vi. You should now be able to use the smp PE.
 
 ## Adjust system time
 
