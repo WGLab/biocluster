@@ -2,7 +2,7 @@
 
 Biocluster runs the [Rocks cluster management system](http://www.rocksclusters.org), which is based on CentOS. A typical Rocks cluster is composed of a head node (by default, it is called frontend), a storage node (by default, the storage node is the head node), and multiple compute nodes. See below for a diagram.
 
-![cluster](/img/cluster.png)
+![cluster](https://cloud.githubusercontent.com/assets/5926328/12101852/c97c8e00-b2eb-11e5-8e21-949d4960fb46.png)
 
 These eth0 port in these six machines are connected by a ethernet network switch, which is called network-0-0. The head node is also connected to Internet via eth1.
 
