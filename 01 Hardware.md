@@ -16,6 +16,10 @@ This basically means that each compute node has an eth0 port and an ib0 port, an
 
 Installtion of IB card is straightforward, it is merely an extra card that you insert into a PCIExpress slot. For servers, most likely you will need a PCI riser card, so that you insert IB card into the riser card and insert the riser card into the motherboard. 
 
+See below for an updated network diagram. The actual implementation is a bit more complicated than drafted below with multiple networks, but the set up below is already sufficient to build a high-performance cluster for a bioinformatics lab.
+
+![cluster](https://cloud.githubusercontent.com/assets/5926328/12102015/f7d6a3ac-b2ec-11e5-8dbc-2be442c69eb6.png)
+
 ## Choosing the components
 
 Every major computer manufacture (Dell, HP, IBM, etc) offers rackmount server boxes, and there are also many smaller companies that specialize in server boxes with their own brands. Typically, you may want to pick a 1U head node, one or multiple 2U compute node box (that houses 4-socket nodes), and one 2U or 4U storage node. 
