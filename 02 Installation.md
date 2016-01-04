@@ -1,6 +1,6 @@
 ## Overview
 
-The cluster operating system that I use is called Rocks. It is one of several clusterware that is widely used, and is well maintained and regularly updated. You first need to download the ISO images, write it to a DVD, use an external DVD-ROM (or internal one if your head node has one) to start the computer.
+The cluster operating system that I use is called [Rocks](http://www.rocksclusters.org/wordpress/). It is one of several clusterware that is widely used, and is well maintained and regularly updated. You first need to download the ISO images, write it to a DVD, use an external DVD-ROM (or internal one if your head node has one) to start the computer.
 
 ## Head node installation
 
