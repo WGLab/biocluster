@@ -1,6 +1,6 @@
 ## Introduction
 
-Sun Grid Engine. Users should use use `qmon` (configure SGE by GUI) and `qconf` (configure SEG by command line) to configure SGE.
+Sun Grid Engine is a job scheduling system that is widely used in computing clusters today. Users should use use `qmon` (configure SGE by GUI) and `qconf` (configure SEG by command line) to configure SGE.
 
 ## Detailed Reference
 
@@ -99,8 +99,7 @@ urgency_slots      min
 accounting_summary FALSE
 ```
 
-
-add a new pe such as smp
+To add a new pe such as smp
 first edit a file `pe.txt`
 
 ```
@@ -117,31 +116,22 @@ urgency_slots     min
 accounting_summary FALSE
 ```
 
-Then run "qconf -Ap pe.txt" as root. Now smp can be used as a PE in the qsub argument. Alternatively, I found that it is easier to just type “qconf -ap smp” to edit a default file directory.
+Then run `qconf -Ap pe.txt` as root. Now smp can be used as a PE in the qsub argument. 
 
-Next thing is to add the new PE smp into the all.q queue.
-Please do the following as root on the head node.
+Next thing is to add the new PE smp into the all.q queue by `qconf -mq all.q`, and add `smp` to the `pe_list` line in the file.
 
-```
-qconf -mq all.q
-```
 
-This will open an interactive vi session. Look for the following line:
+## SGE complex value for host
 
-```
-pe_list
-```
-
-add `smp` to that line. Save the file and exit vi. You should now be able to use the smp PE.
-
-SGE complex value for host
 ```
 qconf -me <HOSTNAME>
 ```
 Then use "complex_values   h_vmem=48G", to set 48G for a particular host as h_vmem value.
-Extremely important: whenever adding a new host, one must use "qconf -me" to set up complex_values
 
-Temporarily enable or disable a host
+> Extremely important: whenever adding a new host, one must use "qconf -me" to set up complex_values. In combination with `-l h_vmem=xG` in the `qsub` command, this will eliminate the possibility of running out of memory when multiple jobs in the same host all request large chunks of memory at the same time.
+
+## Temporarily enable or disable a host
+
 ```
 qmod -d all.q@compute-0-4
 qmod -e all.q@compute-0-4
@@ -150,7 +140,7 @@ qmod -e all.q@compute-0-4
 `qmod -d all.q@compute-*` should disable all the queue instances
 
 
-##job status
+## job status
 
 'au' simply means that Grid Engine is likely not running on the node. The "a" means 'alarm' and the "u" means unheard/unreachable. The combination of the two more often than not means that SGE is not running on the compute node.
 
@@ -158,7 +148,8 @@ E is a worse state to see. It means that there was a major problem on the comput
 
 E states do not go away automatically, even if you reboot the cluster. Once you think the cluster is fine you can use the "qmod" command to clear the E state.
 
-host status
+##host status
+
 - 'au' - Host is in alarm and unreachable,
 - 'u' - Host is unreachable. Usually SGE is down or the machine is down. Check this out.
 - 'a' - Host is in alarm. It is normal on if the state of the node is full, it means, if on the node is using most of its resources.
