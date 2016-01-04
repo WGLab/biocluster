@@ -115,4 +115,8 @@ iostat -d -x >> iostat
 ```
 I think “iostat -n -m -x” would be more informative. But it shows that “dm-0” can utilize as high as 57% CPU when he runs MAKER, so the file system load can be really high and is probably why it is unstable.
 
+## Fix autofs issues
 
+When I cannot umount a NFS directory, use “umount -l” will always work.
+
+When I cannot stop a service such as autofs, just do `ps aux | fgrep auto` and `kill -9` the process.
