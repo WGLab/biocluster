@@ -47,3 +47,17 @@ To access the KVM in a compute node (for example, compute-0-0) in the cluster, I
 
     To solve this problem, I need to download Java 1.8 (64bit binary) and install in local directory by unpacking it. (When I am writing this article, Java 1.8 is not available in Rocks yet). Then run the "jcontrol" program and add "https://compute-0-0-ipmi" into the exception list for security settings (since the java program from the IPMI is self-signed). Then do the same thing above, but navigate to the new Java and use the javaws to open this jnlp file. Then everything works just fine.
 
+## Fixing compatibility problem for IPMI in Rocks
+
+For some reason, in some versions of Rocks that I encountered, once a node is turned off, it cannot be turned on again, and the Rocks system freezes at “Starting IPMI” stage when starting up.
+
+I fixed this problem by first “yum install OpenIPMI” in head node. It will install/update a few packages. Then just add
+
+<package>OpenIPMI</package>
+<package>OpenIPMI-devel</package>
+<package>OpenIPMI-libs</package>
+
+to `extend-compute.xml` and then reinstall the compute nodes. Then everything returns normal.
+
+This is no longer necessary as of Rocks 6.1.1 since OpenIMPI is installed in compute node by default.
+
