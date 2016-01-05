@@ -53,11 +53,13 @@ For some reason, in some versions of Rocks that I encountered, once a node is tu
 
 I fixed this problem by first “yum install OpenIPMI” in head node. It will install/update a few packages. Then just add
 
+```
 <package>OpenIPMI</package>
 <package>OpenIPMI-devel</package>
 <package>OpenIPMI-libs</package>
+```
 
 to `extend-compute.xml` and then reinstall the compute nodes. Then everything returns normal.
 
-This is no longer necessary as of Rocks 6.1.1 since OpenIMPI is installed in compute node by default.
+This is no longer necessary as of Rocks 6.1.1, since OpenIMPI is installed in compute node by default.
 
