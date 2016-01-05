@@ -43,9 +43,9 @@ When you visit the IPMI from your web browser, there should be a menu option tha
 
 To access the KVM in a compute node (for example, compute-0-0) in the cluster, I first need to use vncserver to connect to head node, open Firefox, then use web interface to visit compute-0-0-ipmi, then select 'remote access', and a dialogue will pop out asking how to handle the *.jnlp file. Basically just run the Java webstart, which will open a new window that allows one to see what is going on in the compute node.
 
-* Troubleshooting: Soemtimes when you open the jnlp file, Java will say something like "jnlp: illegal instruction". How to solve it?
+> Troubleshooting: Soemtimes when you open the jnlp file, Java will say something like "jnlp: illegal instruction". How to solve it?
 
-    To solve this problem, I need to download Java 1.8 (64bit binary) and install in local directory by unpacking it. (When I am writing this article, Java 1.8 is not available in Rocks yet). Then run the "jcontrol" program and add "https://compute-0-0-ipmi" into the exception list for security settings (since the java program from the IPMI is self-signed). Then do the same thing above, but navigate to the new Java and use the javaws to open this jnlp file. Then everything works just fine.
+> To solve this problem, I need to download Java 1.8 (64bit binary) and install in local directory by unpacking it. (When I am writing this article, Java 1.8 is not available in Rocks yet). Then run the "jcontrol" program and add "https://compute-0-0-ipmi" into the exception list for security settings (since the java program from the IPMI is self-signed). Then do the same thing above, but navigate to the new Java and use the javaws to open this jnlp file. Then everything works just fine.
 
 ## Fixing compatibility problem for IPMI in Rocks
 
