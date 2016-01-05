@@ -160,3 +160,12 @@ PRUNEPATHS = "/afs /media /net /sfs /tmp /udev /var/spool/cups /var/spool/squid 
 
 so that the `/export` (in nas-0-0) and `/home` (in biocluster) directory is not used in the updatedb operation.
 
+# head node restrictions
+
+Head node should be used for user login and job submission and external data download only. You may want to restrict the amount of memory used in the head node by each user, to prevent somebody from running a job with large chunks of memory (when swap is used, the head node becomes extremely slow). For example, adding the following
+
+```
+* soft as 24000000
+* hard as 20000000
+```
+to `/etc/security/limits.conf` file, so no process uses more than 24GB memory.
