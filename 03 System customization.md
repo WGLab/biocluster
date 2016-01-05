@@ -59,6 +59,36 @@ rocks sync config
 rocks sync host network compute-0-4
 ```
 
+## Change limit on the number of open files
+
+By default, Linux has a limit of 1024 files that can be opened simultaneously. For bioinformatics applications, this is way too small. A simple variant calling (such as by GATK) or a simple allele frequency calculation (such as by PennCNV) can easily exceed this limit and result in mysterious failure of the software tools.
+
+You can follow this procedure to change this limit:
+
+First, run a `ulimit -a`, which confirms that limit on open files is “1024” which is too few.  Next, run the following command (if the `extend-compute.xml` file does NOT exist):
+
+```
+# cd /export/rocks/install/site-profiles/6.1/nodes/
+# cp skeleton.xml extend-compute.xml
+```
+
+Now modify the “<post>” section in extend-compute.xml with:
+
+```
+echo '* soft nofile 20000' >> /etc/security/limits.conf
+echo '* hard nofile 20000' >> /etc/security/limits.conf
+```
+
+The difference is: the soft limit may be changed later, up to the hard limit value, by the process running with these limits and hard limit can only be lowered. Here I set them as identical.
+
+To apply your customized configuration scripts to compute nodes, rebuild the distribution:
+```
+# cd /export/rocks/install
+# rocks create distro
+```
+
+Now re-install all nodes.
+
 ## Setting up parallel environment
 
 By default, Rocks does not provide a smp parallel environment for software tools that can leverage multiple cores in the same machine. I do not understand why, but this is how to address this problem:
@@ -120,4 +150,13 @@ hwclock --systohc --localtime
 ```
 
 Now the hardware clock is re-adjusted to the system time and both now point to the local time.
+
+## Change updatedb schedule
+
+If you have a large number of files in the system, you should change the updatedb schedule. Otherwise, the  `updatedb` program can consume a significant amount of system resources and occasionally makes the system extremely slow. You just need to edit  `/etc/updatedb.conf` and add `/export` and `/home` below:
+```
+PRUNEPATHS = "/afs /media /net /sfs /tmp /udev /var/spool/cups /var/spool/squid /var/tmp /export"
+```
+
+so that the `/export` (in nas-0-0) and `/home` (in biocluster) directory is not used in the updatedb operation.
 
