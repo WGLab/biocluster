@@ -45,9 +45,23 @@ To change number of instances of NFS daemon in the NFS server (nas-0-0), in /etc
 
 type `service nfs reload` to reload the change, without restarting server.
 
-I found that RPCNFSDCOUNT=32 needs to be changed in `/etc/sysconfig/nfs` instead of the `/etc/init.d/nfs`, since the first line of the `init.d/nfs` file asks to run the sysconfig/nfs file instead.
+I found that RPCNFSDCOUNT=64 needs to be changed in `/etc/sysconfig/nfs` instead of the `/etc/init.d/nfs`, since the first line of the `init.d/nfs` file asks to run the sysconfig/nfs file instead.
 
-Typically, the nas-0-0 will have 6, 12 or more cores, so it is totally fine to set the value to 32 or 64 or more, to accormodate busy NFS requests from clients, especially when the number of nodes in the cluster is high.
+Typically, the nas-0-0 will have 6, 12 or more cores, so it is totally fine to set the value to 64 or more, to accormodate busy NFS requests from clients, especially when the number of nodes in the cluster is high.
+
+### Improving NFS performance
+
+Some of the following points can be used to improve performance:
+
+1. Add 'RPCNFSDCOUNT=64' in `/etc/sysconfig/nfs` as mentioned above
+2. In head node, Modify ``/etc/auto.master`. In the line `/home auto.home`. Remove `--timeout 1200`, add `rsize=32768,wsize=32768,hard,intr`. Since IB traffic is used for NFS, here we set up very large rsize and wsize values.
+3. Reload config info (`service autofs reload`)
+4. You may want to tune LSI RAID card parameters as well to improve read/write performance. The following command ensures write-back, read-ahead, and use cache even if a bad battery is encountered (the latest generation of card no longer use battery though).
+    ```
+/opt/MegaRAID/MegaCli/MegaCli64 -LDSetProp WB -LALL -aALL
+/opt/MegaRAID/MegaCli/MegaCli64 -LDSetProp CachedBadBBU -Lall -aAll
+/opt/MegaRAID/MegaCli/MegaCli64 -LDSetProp RA -LALL -aALL
+```
 
 ### Setting up RDMA mount
 
