@@ -5,7 +5,7 @@ The main reference for NFS can be found [here](http://nfs.sourceforge.net/nfs-ho
 The command below can be used to check the version of NFS:
 
 ```
-[root@biocluster /home/kaiwang]$ /sbin/mount.nfs -V
+[root@biocluster /]$ /sbin/mount.nfs -V
 mount.nfs (linux nfs-utils 1.2.3)
 ```
  
@@ -93,8 +93,11 @@ There are no real performance differences when increasing the size to rsize=1048
 
 
 ### NFS in biocluster
+
+Using the benchmarking tool IOZone, I found that the I/O write is faster than read. This is likely due to the write-back caching of LSI RAID cards.
+
 ```
-[kaiwang@biocluster ~]$ admin/iozone3_373/src/current/iozone -l 5 -u 5 -r 16k -s 60g -F exfile1 exfile2 exfile3 exfile4 exfile5 -i 0 -i 1 -c
+[kaiwang@biocluster ~]$ iozone -l 5 -u 5 -r 16k -s 60g -F exfile1 exfile2 exfile3 exfile4 exfile5 -i 0 -i 1 -c
 -R: geneate Excel report; -a: full automatic mode; -g: set max file size for auto mode; -i: write test/read test selection; -b: binary file name; -c: use close() in timing calculation
 
         Children see throughput for  5 initial writers  =  993666.23 KB/sec
