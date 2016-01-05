@@ -19,7 +19,7 @@ This tutorial is organized into several main sections:
 - [Storage administration](07 Storage administration.md)
 - [NFS administration](08 NFS administration.md)
 - [Remote management](09 Remote management.md)
-- [Misc Linux administration](10 Misc Linux administration.md)
+- [Misc Linux configuration](10 Misc Linux configuration.md)
 
 ## Contact
 
