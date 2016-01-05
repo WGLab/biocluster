@@ -8,8 +8,10 @@ The command below can be used to check the version of NFS:
 [root@biocluster /]$ /sbin/mount.nfs -V
 mount.nfs (linux nfs-utils 1.2.3)
 ```
- 
-## checking NFS version installed (2, 3, 4 are all installed)
+
+## NFS tuning
+
+### checking NFS version installed (2, 3, 4 are all installed)
 
 ```
 [root@compute-0-0 ~]# rpcinfo -p nas-0-0 
@@ -25,7 +27,7 @@ tcp 2049
 udp 2049
 ```
 
-check NFS status to see if retransmission happens a lot since last reboot. Usually we want to see retrans to be 0 if it is high, increase the number of nfsd.
+check NFS status to see if retransmission happens a lot since last reboot. Usually we want to see retrans to be 0 if it is high, increase the number of NFS daemons (see below).
 ```
 [yunfeiguo@biocluster2 partition1]$ nfsstat -rc
 Client rpc stats:
@@ -33,25 +35,31 @@ calls      retrans    authrefrsh
 98184      0          98188
 ```
 
-The following sentences are outdated as we are not using RDMA now:
+### change number of NFS daemons
+
+To change number of instances of NFS daemon in the NFS server (nas-0-0), in /etc/init.d/nfs, the line below specifies the default number of threads (8)
+
+```
+        [ -z "$RPCNFSDCOUNT" ] && RPCNFSDCOUNT=8 
+```
+
+type `service nfs reload` to reload the change, without restarting server.
+
+I found that RPCNFSDCOUNT=32 needs to be changed in `/etc/sysconfig/nfs` instead of the `/etc/init.d/nfs`, since the first line of the `init.d/nfs` file asks to run the sysconfig/nfs file instead.
+
+Typically, the nas-0-0 will have 6, 12 or more cores, so it is totally fine to set the value to 32 or 64 or more, to accormodate busy NFS requests from clients, especially when the number of nodes in the cluster is high.
+
+### Setting up RDMA mount
+
+The following instructions are outdated, as we are not using RDMA now. However, it may be helpful to some readers:
+
 Regardless of how the client was built (module or built-in), use this command to mount the NFS/RDMA server:
 ```
 $ mount -o rdma,port=20049 <IPoIB-server-name-or-address>:/<export> /mnt
 ```
 To verify that the mount is using RDMA, run "cat /proc/mounts" and check the "proto" field for the given mount. 
 
-### Setting up NFS server
-change number of instances of NFS daemon in the server
-
-in /etc/init.d/nfs, the line below specifies the default number of threads (8)
-```
-        [ -z "$RPCNFSDCOUNT" ] && RPCNFSDCOUNT=8 
-```
-
-type `service nfs reload` to reload the change, without restarting server.
-I found that RPCNFSDCOUNT=32 needs to be changed in `/etc/sysconfig/nfs` instead of the `/etc/init.d/nfs`, since the first line of the `init.d/nfs` file asks to run the sysconfig/nfs file instead.
-
-###Read Ahead and IO scheduler tuning
+### Read Ahead and IO scheduler tuning
 ```
 [root@nas-0-0 /home/kaiwang]$ blockdev --report
 RO    RA   SSZ   BSZ   StartSec            Size   Device
@@ -81,6 +89,10 @@ echo anticipatory > /sys/block/sdc/queue/scheduler
 blockdev --setra 16384 /dev/mapper/nas--0--0-export
 ```
 
+### Fixing "owned by nobody" problem in NFS
+
+Once after I upgrade Rocks system, I found that when I `ls -l /home/kaiwang` it shows that it is owned by “nobody” (it only happens in head node, not compute node). This is due to `/home/kaiwang` mounted by NFS v4. Therefore, I checked http://www.softpanorama.org/Net/Application_layer/NFS/Troubleshooting/nfsv4_mounts_files_as_nobody.shtml, and added “Domain=local” in the `/etc/idmapd.conf` file in biocluster, and did `service rpcidmapd restart` in both biocluster and in nas-0-0, and everything works fine now.
+
 ## Some NFS observations:
 
 (1) rsize/wsize: For NFSv2 or NFSv3, the default values for both parameters is set to 8192. For NFSv4, the default values for both parameters is set to 32768. See http://www.centos.org/docs/5/html/Deployment_Guide-en-US/s1-nfs-client-config-options.html.
@@ -91,8 +103,7 @@ There are no real performance differences when increasing the size to rsize=1048
 
 (3) IO scheduler: No realistic differences in terms of performance, so cfq (completely fair queue) as default would be fine.
 
-
-### NFS in biocluster
+### NFS performance in biocluster
 
 Using the benchmarking tool IOZone, I found that the I/O write is faster than read. This is likely due to the write-back caching of LSI RAID cards.
 
