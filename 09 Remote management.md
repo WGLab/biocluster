@@ -61,5 +61,5 @@ I fixed this problem by first “yum install OpenIPMI” in head node. It will i
 
 to `extend-compute.xml` and then reinstall the compute nodes. Then everything returns normal.
 
-This is no longer necessary as of Rocks 6.1.1, since OpenIMPI is installed in compute node by default.
+This is no longer necessary as of Rocks 6.1.1, since OpenIPMI is installed in compute node by default.
 
