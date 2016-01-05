@@ -1,19 +1,18 @@
 ## Overview
 
-This section provides some reference and describes some tricks to management the storage devices in a Rocks cluster called biocluster. These include the hard drives in each compute node, the hard drives in the head node (frontend), and the hard drives in the storage node (NAS appliance).
+This section provides some reference and describes some tricks to manage the storage devices in a Rocks cluster. These include the hard drives in each compute node, the hard drives in the head node (frontend), and the hard drives in the storage node (NAS appliance).
 
 ## Hard drive selection
 
-If you are building a NAS for heavy I/O work (since each compute node will need to access this NAS, and all user home directory is stored here), make sure to use enterprise grade drives, such as Seagate Constellation or WD Re drives, and make sure to use SAS drives rather than SATA drives (the price difference is very minor today). If you are building a NAS for occasional data back up and storage, then a drive designed for NAS can be used, such as WD Red drives. Just do not buy any drive for desktop applications, such as Seagate Burracuda.
+If you are building a NAS for heavy I/O work (since each compute node will need to access this NAS, and all user home directory is stored here), make sure to use enterprise grade drives, such as Seagate Constellation drives, and make sure to use SAS drives rather than SATA drives (the price difference is very minor today). If you are building a NAS for occasional data back up and storage, then a drive designed for NAS can be used, such as WD Red drives. Just do not buy any drive for desktop applications, such as Seagate Burracuda.
 
 For compute node, it does not really matter that much, so a cheap (but large-capacity) drive is probably preferred when budget is a concern; otherwise, use enterprise drive. The approximate capacity really depends on your application: for genomics application that often requires processing 100G of raw sequence data and generate even 500G temporary files, it makes the most sense to use $TMP in a compute node to store these temporary files (rather than using the NAS appliance itself), so a large drive (such as 3T) in compute node makes more sense. 
 
-For head node, make sure to use enterprise drives, and use a RAID 1. Size does not matter, in fact 500G is more than enough.
-
+For head node, make sure to use enterprise drives, and use a RAID 1. Size does not matter much, yet it is more important to have redundancy.
 
 ## NAS storage administration
 
-The NAS is a basically a compute box with many hard drives. Typical set up are 36 drives within a 4U enclosure, or 18 drives within a 2U enclosure. These drives are connected to a SAS RAID controller and a SAS expander (typically when you buy the computer box, these components are already there so you do not need to do anything). LSI is the most popular RAID controller, but some manufacturers such as Dell has their own controllers. My preference is to use LSI, even if I have access to a Dell machine with H700 controllers, I still unplug it and install a new LSI card. The reason is that manufacturers such as Dell/IBM/HP make things difficult for users to customize so that users can only buy from them with high premium; for example, the SAS cable for H700 is not compatible with a real SAS cable that everybody uses, even though they have identical appearance and have identical name and identical interface. It drived me crazy once.
+The NAS is a basically a compute box with many hard drives. Typical set up are 36 drives within a 4U enclosure, or 18 drives within a 2U enclosure. These drives are connected to a SAS RAID controller and a SAS expander (typically when you buy the computer box, these components are already there so you do not need to do anything). LSI is the most popular RAID controller, but some manufacturers such as Dell has their own controllers. My preference is to use LSI; even when I have access to a Dell machine with H700 controllers, I still unplug it and install a new LSI card. The reason is that manufacturers such as Dell/IBM/HP make things difficult for users to customize so that users can only buy from them with high premium; for example, the SAS cable for H700 is NOT compatible with a real SAS cable that everybody else uses, even though they have identical appearance and have identical name and identical interface. It drived me crazy once, and I cannot imagine how other users can possibly figure this out.
 
 The instructions below refer to LSI controllers.
 
