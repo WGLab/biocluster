@@ -61,8 +61,26 @@ Alternatively, if the machine is accessible, you can just login and use `/boot/k
 
 > Sometimes a node fails, and you specify to re-install the node and forced to restart the computer. However, the computer displays various error messages, such as "DHCP -/|\" hanging, or "hard drive parameter not found", or "no hard drive found". Sometimes, during Rocks install, the message "loading vmlinz...................." shows up and then freezes, or the "waiting for hardware to initialize" message that freezes. I found that all these problems were due to hard drive issues. After switching hard drive, all the issues were resolved.
 
+## Upgrading the system
 
+Once a few years, we will need to upgrade the entire Rocks system to a new version. The general procedure that I used to upgrade version 5 to version 6 is detailed below.
 
+1. Follow instructions [here](http://central6.rocksclusters.org/roll-documentation/base/6.1/upgrade-frontend.html), generate a ISO file that contains system information and burn it into CD. This is called biocluster-backup roll.
+2. Install Rocks 6.1 as usual, but after selecting which rolls in the installation disk to install, supply the backup roll as well by inserting the CD into the head node.
+3. After that, all compute nodes will be reinstalled automatically upon restarting, including nas-0-0.
+4. Unlike compute nodes, nas-0-0 requires some manual intervention: it will ask for disk partition information. Do not change any partition, but reformat `/` and `/var` section, and do not touch anything on the LVM (in fact, I tried to mount the XFS as `/export` but it shows error message.
+5. After nas-0-0 installation is done, add `/dev/mapper/nas--0--0-export /export            xfs     defaults        0 0` to /etc/fstab, so that the LVM is mounted to /export every time nas-0-0 is started.
+6. Add `/export 192.168.1.1/255.255.255.0(fsid=0,rw,async,insecure,no_root_squash)` to /etc/exports, so that the `/export` directory can be shared to local ib network
+7. `service nfs restart` in nas-0-0, and then edit `/etc/auto.home` in biocluster to ensure using nfs protocol for mounting, then things all work now.
+8. I found that if I reinstall an IBM node, then it can never be booted again by PXE (hang on “Loading from disk…”). The solution is to run these three commands in head node.
+    ```
+# rocks add bootaction action=os args="hd0" kernel="com32 chain.c32"
+# rocks list bootaction
+# cp /usr/share/syslinux/chain.c32 /tftpboot/pxelinux/
+```
 
+    The root cause is due to specific IBM hardware configurations. See https://lists.sdsc.edu/pipermail/npaci-rocks-discussion/2012-May/057812.html for details.
+9. use `qconf -me <hostname>` to modify complex_value such as as h_vmem=48G for each host. use `qconf -mq all.q` to modify the default h_vmem for each job. For some reason, these configurations are not kept during upgrading so they must be configured again.
+10. Other misc changes, such as changing the way user creation is handled, etc.
 
 
