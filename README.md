@@ -15,7 +15,7 @@ This tutorial is organized into several main sections:
 - [System customization](03 System customization.md)
 - [User account administration](04 User account administration.md)
 - [Network administration](05 Network administration.md)
-- [SGE administration](06 SGE administration)
+- [SGE administration](06 SGE administration.md)
 - [Storage administration](07 Storage administration.md)
 - [NFS administration](08 NFS administration.md)
 - [Remote management](09 Remote management.md)
