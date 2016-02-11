@@ -86,63 +86,6 @@ hwclock --systohc --localtime
 
 Now the hardware clock is re-adjusted to the system time and both now point to the local time (which was synchronized to NTP server).
 
-## Install R
-
-R is a statistical computing language that is commonly used in bioinformatics. However, Rocks package repository does not include R, so you need to install it manually using [EPEL](https://fedoraproject.org/wiki/EPEL), which stands for Extra Package for Enterprise Linux. The detailed procedure is described below.
-
-1. log in head node as root.
-2. Install EPEL if you have not done so: `rpm -Uvh https://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm`. You may need to change the version number, depending on your Rocks/CentOS version.
-3. Install R by `yum install R`. Note that yum should automatically search EPEL for R packages, but if not, you can manually force yum to do that by `yum --enablerepo=epel install R`.
-4. Go to `/usr/cache/yum/epel/packages` to know what packages are just installed. Typically, 5-10 packages are installed to have full functionality of R in the system.
-5. Now copy all these \*.rpm files to `/export/rocks/install/contrib/6.1.1/x86_64/RPMS` (change the path to suite your own system!). 
-6. Now go to `/export/rocks/install/site_profile/6.1.1/nodes`, edit `extend-compute.xml`, and add in the name of the packages (see an example below).
-7. This is totally optional and I do not actually use it. If you want to use graphical interface in compute node (which does not make sense to me), since X11 is required, use `rocks add host attr compute-0-0 X11` to enable this.
-8. Then `cd /export/rocks/install`, type `rocks create distro`, then re-install all compute nodes. (Hint: you can do `rocks set host boot compute action=install` so all compute nodes re-install themselves after rebooting).
-
-> Example: this is what I need to add in my `extend-compute.xml` file:
-```
-<package>R</package>
-<package>R-core</package>
-<package>R-core-devel</package>
-<package>R-devel</package>
-<package>R-java</package>
-<package>R-java-devel</package>
-<package>blas</package>
-<package>blas-devel</package>
-<package>ecj</package>
-<package>gcc-java</package>
-<package>lapack</package>
-<package>lapack-devel</package>
-<package>libgcj-devel</package>
-<package>libgcj-src</package>
-<package>libicu</package>
-<package>libicu-devel</package>
-<package>texinfo</package>
-<package>texinfo-tex</package>
-<package>xz-devel</package>
-<package>cmake</package>
-<package>bzip2-devel</package>
-<package>gcc-c++</package>
-<package>libart_lgpl</package>
-<package>libgcj</package>
-<package>libstdc++-devel</package>
-```
-
-## Set up infiniband network
-
-Many infiniband switches have built-in subnet manager, which can manage the fabric automatically and ensure proper communications between the IB hosts. Just in case the IB switch does not have this functionality, you need to install a subnet manager in one of the nodes in the network. I recommend that you should install it in the storage node `nas-0-0`, because it is typically the most stable host in the entire network. Just do a `rocks add host attr nas-0-0 subnetmanager true` and then `rocks sync config`.
-
-After installation of compute nodes, you need to manually set up the network for infiniband. Note that you should not edit the typical files such as `/etc/sysconfig/network-scripts/ifcfg-ib0`; it may work to configure the network, but it will not survive the next re-installation of the compute node. More explanation is given in [this section](05 Network administration.md). To ensure that the network information is stored within the central MySQL database in head node, you must use Rocks system command. An example is given below:
-
-```
-rocks add host interface compute-0-4 ib0
-rocks set host interface ip compute-0-4 iface=ib0 ip=192.168.1.249
-rocks set host interface subnet compute-0-4 iface=ib0 subnet=ipoib
-rocks set host interface name compute-0-4 iface=ib0 name=compute-0-4-ib
-rocks sync config
-rocks sync host network compute-0-4
-```
-
 ## Change limit on the number of open files
 
 By default, Linux has a limit of 1024 files that can be opened simultaneously. For bioinformatics applications, this is way too small. A simple variant calling (such as by GATK) or a simple allele frequency calculation (such as by PennCNV) can easily exceed this limit and result in mysterious failure of the software tools.
@@ -221,3 +164,61 @@ Head node should be used for user login and job submission and external data dow
 * hard as 20000000
 ```
 to `/etc/security/limits.conf` file, so no process uses more than 24GB memory.
+
+
+## Install R
+
+R is a statistical computing language that is commonly used in bioinformatics. However, Rocks package repository does not include R, so you need to install it manually using [EPEL](https://fedoraproject.org/wiki/EPEL), which stands for Extra Package for Enterprise Linux. The detailed procedure is described below.
+
+1. log in head node as root.
+2. Install EPEL if you have not done so: `rpm -Uvh https://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm`. You may need to change the version number, depending on your Rocks/CentOS version.
+3. Install R by `yum install R`. Note that yum should automatically search EPEL for R packages, but if not, you can manually force yum to do that by `yum --enablerepo=epel install R`.
+4. Go to `/usr/cache/yum/epel/packages` to know what packages are just installed. Typically, 5-10 packages are installed to have full functionality of R in the system.
+5. Now copy all these \*.rpm files to `/export/rocks/install/contrib/6.1.1/x86_64/RPMS` (change the path to suite your own system!). 
+6. Now go to `/export/rocks/install/site_profile/6.1.1/nodes`, edit `extend-compute.xml`, and add in the name of the packages (see an example below).
+7. This is totally optional and I do not actually use it. If you want to use graphical interface in compute node (which does not make sense to me), since X11 is required, use `rocks add host attr compute-0-0 X11` to enable this.
+8. Then `cd /export/rocks/install`, type `rocks create distro`, then re-install all compute nodes. (Hint: you can do `rocks set host boot compute action=install` so all compute nodes re-install themselves after rebooting).
+
+> Example: this is what I need to add in my `extend-compute.xml` file:
+```
+<package>R</package>
+<package>R-core</package>
+<package>R-core-devel</package>
+<package>R-devel</package>
+<package>R-java</package>
+<package>R-java-devel</package>
+<package>blas</package>
+<package>blas-devel</package>
+<package>ecj</package>
+<package>gcc-java</package>
+<package>lapack</package>
+<package>lapack-devel</package>
+<package>libgcj-devel</package>
+<package>libgcj-src</package>
+<package>libicu</package>
+<package>libicu-devel</package>
+<package>texinfo</package>
+<package>texinfo-tex</package>
+<package>xz-devel</package>
+<package>cmake</package>
+<package>bzip2-devel</package>
+<package>gcc-c++</package>
+<package>libart_lgpl</package>
+<package>libgcj</package>
+<package>libstdc++-devel</package>
+```
+
+## Set up infiniband network
+
+Many infiniband switches have built-in subnet manager, which can manage the fabric automatically and ensure proper communications between the IB hosts. Just in case the IB switch does not have this functionality, you need to install a subnet manager in one of the nodes in the network. I recommend that you should install it in the storage node `nas-0-0`, because it is typically the most stable host in the entire network. Just do a `rocks add host attr nas-0-0 subnetmanager true` and then `rocks sync config`.
+
+After installation of compute nodes, you need to manually set up the network for infiniband. Note that you should not edit the typical files such as `/etc/sysconfig/network-scripts/ifcfg-ib0`; it may work to configure the network, but it will not survive the next re-installation of the compute node. More explanation is given in [this section](05 Network administration.md). To ensure that the network information is stored within the central MySQL database in head node, you must use Rocks system command. An example is given below:
+
+```
+rocks add host interface compute-0-4 ib0
+rocks set host interface ip compute-0-4 iface=ib0 ip=192.168.1.249
+rocks set host interface subnet compute-0-4 iface=ib0 subnet=ipoib
+rocks set host interface name compute-0-4 iface=ib0 name=compute-0-4-ib
+rocks sync config
+rocks sync host network compute-0-4
+```
