@@ -209,6 +209,10 @@ To create a new volume, follow the procedure:
 
 6. After nas-0-0 installation is done, add `/dev/mapper/nas--0--0-export /export            xfs     defaults        0 0` to `/etc/fstab`, so that the LVM is mounted to `/export` every time nas-0-0 is started. Additionally, add `/export 10.1.1.1/255.255.0.0(fsid=0,rw,async,insecure,no_root_squash)` to /etc/exports, so that the “/export” directory can be shared to local ib network.
 
+## Extending the XFS volume by JBOD
+
+First, create two drive groups in LSI WEBIOS, and the system will treat them as `/dev/sdd` and `/dev/sde`, respectively. Now go to Linux, type `parted /dev/sdd`, then `mklabel gpt`, then `mkpart primary 0% 100%`, then “quit”. Then `mkfs.xfs /dev/sdd1` (this step is most likely not needed). Do the same for `/dev/sde1`. Now `pvcreate /dev/sdd1` and `pvcreate /dev/sde1`. Use “pvscan” to confirm two physical volumes created. use “vgdisplay” to confirm FREE PE=0. Then `vgextend nas-0-1 /dev/sdd1` and `vgextend nas-0-1 /dev/sde1`, then “vgdisplay” again. Check the FREE size. Now `lvextend -L +100%FREE /dev/nas-0-1/export`, type “df -h” to check size. Then `xfs_growfs /dev/nas-0-1/export`, and type “df -h” again to check if the size has changed to the correct size. 
+
 
 ## XFS volume repair
 
