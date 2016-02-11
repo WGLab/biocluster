@@ -2,7 +2,7 @@
 
 Once installation of the cluster is done, you typically want to make some customization to the cluster. This section describes several common tasks.
 
-## Setting up system path for Perl and Python
+## Setting up system path for Perl and Python and Java
 
 If you are installing an updated major version (such as 6.2) rather than initial major version (such as 6.0) of Rocks, the default Perl and Python will be at `/usr/bin/perl` and `/usr/bin/python` respectively. However, you may have selected to install Perl/Python roll during the installation, and these are actually installed in `/opt/perl/bin` and `/opt/python/bin` respectively. These directories are NOT in default PATH, so your users cannot access it by default (in other word, if you type `perl -v` or `python -v`, you will access the default lower version of perl and python).
 
@@ -33,7 +33,7 @@ Now we can log out and log in again, and check the new PATH:
 /opt/openmpi/bin:/usr/lib64/qt-3.3/bin:/opt/python/bin:/opt/perl/bin:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/opt/ganglia/bin:/opt/ganglia/sbin:/usr/java/latest/bin:/opt/maven/bin:/opt/pdsh/bin:/opt/rocks/bin:/opt/rocks/sbin:/opt/gridengine/bin/linux-x64:/root/bin
 ```
 
-For Java, Rocks automatically set up the version so you do not have to worry about it. To check this, 
+For Java, the java.sh file already exists, but you need to add `pathmunge /usr/java/latest/bin` to the first line to make sure that Rocks uses the correct version of Java. 
 
 ```
 [root@biocluster admin]# ll /usr/java/
@@ -43,7 +43,7 @@ drwxr-xr-x 8 root root 4096 May  7  2015 jdk1.7.0_51
 lrwxrwxrwx 1 root root   21 Feb 10 05:49 latest -> /usr/java/jdk1.7.0_51
 ```
 
-So the `/usr/java/lastest/bin` in the PATH already point to version 1.7 correctly.
+By default, `/usr/bin/java` is before `/usr/java/latest/bin` in PATH so it will be used, which is version 1.5.
 
 ## Adjust system time
 
