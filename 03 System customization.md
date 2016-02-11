@@ -2,6 +2,50 @@
 
 Once installation of the cluster is done, you typically want to make some customization to the cluster. This section describes several common tasks.
 
+## Setting up system path for Perl and Python
+
+If you are installing an updated major version (such as 6.2) rather than initial major version (such as 6.0) of Rocks, the default Perl and Python will be at `/usr/bin/perl` and `/usr/bin/python` respectively. However, you may have selected to install Perl/Python roll during the installation, and these are actually installed in `/opt/perl/bin` and `/opt/python/bin` respectively. These directories are NOT in default PATH, so your users cannot access it by default (in other word, if you type `perl -v` or `python -v`, you will access the default lower version of perl and python).
+
+To address this, you need to change system path globally. The correct way to do this is to add a script file into `/etc/profile.d`. There are many other ways to do this (such as adding PATH into `/etc/profile` or `/etc/environment` and so on), but they are not perfect and may not survive a system update that overwrite `/etc/profile` or `/etc/environment`.
+
+For example, after installing Rocks, you can check what's the system path:
+
+```
+[root@biocluster admin]# echo $PATH
+/opt/openmpi/bin:/usr/lib64/qt-3.3/bin:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/opt/ganglia/bin:/opt/ganglia/sbin:/usr/java/latest/bin:/opt/maven/bin:/opt/pdsh/bin:/opt/rocks/bin:/opt/rocks/sbin:/opt/gridengine/bin/linux-x64:/root/bin
+```
+
+Now we need to add perl and python into the PATH and make sure that they are before the `/usr/bin` path:
+
+```
+# echo 'pathmunge /opt/perl/bin' > /etc/profile.d/perl.sh
+# chmod +x /etc/profile.d/perl.sh
+# echo 'pathmunge /opt/python/bin' > /etc/profile.d/python.sh
+# chmod +x /etc/profile.d/python.sh
+```
+
+The function pathmunge is defined in the `/etc/profile` file. It takes two arguments (including an optional `after` argument). By default, the new path is added at the front of the PATH.
+
+Now we can log out and log in again, and check the new PATH:
+
+```
+[root@biocluster ~]# echo $PATH
+/opt/openmpi/bin:/usr/lib64/qt-3.3/bin:/opt/python/bin:/opt/perl/bin:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/opt/ganglia/bin:/opt/ganglia/sbin:/usr/java/latest/bin:/opt/maven/bin:/opt/pdsh/bin:/opt/rocks/bin:/opt/rocks/sbin:/opt/gridengine/bin/linux-x64:/root/bin
+```
+
+For Java, Rocks automatically set up the version so you do not have to worry about it. To check this, 
+
+```
+[root@biocluster admin]# ll /usr/java/
+total 4
+lrwxrwxrwx 1 root root   16 Feb 10 05:49 default -> /usr/java/latest
+drwxr-xr-x 8 root root 4096 May  7  2015 jdk1.7.0_51
+lrwxrwxrwx 1 root root   21 Feb 10 05:49 latest -> /usr/java/jdk1.7.0_51
+```
+
+So the `/usr/java/lastest/bin` in the PATH already point to version 1.7 correctly.
+
+
 ## Install R
 
 R is a statistical computing language that is commonly used in bioinformatics. However, Rocks package repository does not include R, so you need to install it manually using [EPEL](https://fedoraproject.org/wiki/EPEL), which stands for Extra Package for Enterprise Linux. The detailed procedure is described below.
