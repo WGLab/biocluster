@@ -99,7 +99,7 @@ First, run a `ulimit -a`, which confirms that limit on open files is “1024” 
 # cp skeleton.xml extend-compute.xml
 ```
 
-Now modify the “<post>” section in extend-compute.xml with:
+Now modify the “\<post\>” section in extend-compute.xml with:
 
 ```
 echo '* soft nofile 20000' >> /etc/security/limits.conf
