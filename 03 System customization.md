@@ -176,6 +176,7 @@ Nothing requires it so you can remove the package.
 ```
 $ yum remove mlocate
 ```
+It will show that it is removed successfully, with a warning that `warning: /etc/updatedb.conf saved as /etc/updatedb.conf.rpmsave`.
 
 # head node restrictions
 
