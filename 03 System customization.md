@@ -195,8 +195,8 @@ R is a statistical computing language that is commonly used in bioinformatics. H
 
 1. log in head node as root.
 2. Install EPEL if you have not done so: `rpm -Uvh https://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm`. You may need to change the version number, depending on your Rocks/CentOS version.
-3. Install R by `yum install R`. Note that yum should automatically search EPEL for R packages, but if not, you can manually force yum to do that by `yum --enablerepo=epel install R`.
-4. Go to `/usr/cache/yum/epel/packages` to know what packages are just installed. Typically, 5-10 packages are installed to have full functionality of R in the system.
+3. Install R by `yum install R`. Note that yum should automatically search EPEL for R packages, but if not, you can manually force yum to do that by `yum --enablerepo=epel install R`. (See troubleshooting information below if this command fails)
+4. Go to `/usr/cache/yum/epel/packages` (actually, check `/etc/yum.conf` to know the exact location) to know what packages are just installed. Typically, 5-10 packages are installed to have full functionality of R in the system.
 5. Now copy all these \*.rpm files to `/export/rocks/install/contrib/6.1.1/x86_64/RPMS` (change the path to suite your own system!). 
 6. Now go to `/export/rocks/install/site_profile/6.1.1/nodes`, edit `extend-compute.xml`, and add in the name of the packages (see an example below).
 7. This is totally optional and I do not actually use it. If you want to use graphical interface in compute node (which does not make sense to me), since X11 is required, use `rocks add host attr compute-0-0 X11` to enable this.
@@ -230,6 +230,42 @@ R is a statistical computing language that is commonly used in bioinformatics. H
 <package>libgcj</package>
 <package>libstdc++-devel</package>
 ```
+
+- Troubleshooting
+
+    In recent versions of Rocks, I cannot use yum to install R, and typical error messages are below:
+    ```
+    Error: Package: R-core-3.2.3-1.el6.x86_64 (epel)
+           Requires: libicuuc.so.42()(64bit)
+Error: Package: R-core-devel-3.2.3-1.el6.x86_64 (epel)
+           Requires: blas-devel >= 3.0
+Error: Package: R-core-devel-3.2.3-1.el6.x86_64 (epel)
+           Requires: lapack-devel
+Error: Package: R-core-devel-3.2.3-1.el6.x86_64 (epel)
+           Requires: texinfo-tex
+Error: Package: R-core-devel-3.2.3-1.el6.x86_64 (epel)
+           Requires: xz-devel
+Error: Package: R-core-3.2.3-1.el6.x86_64 (epel)
+           Requires: libicui18n.so.42()(64bit)
+Error: Package: R-core-devel-3.2.3-1.el6.x86_64 (epel)
+           Requires: libicu-devel
+ You could try using --skip-broken to work around the problem
+ You could try running: rpm -Va --nofiles --nodigest
+ ```
+ 
+   To solve this, install each one manually and finally just do a manual "rpm -ivh --nodeps x.rpm" one by one and in the end it will work. Go to www.rpmfind.net/ to find each RPM for Centos 6:
+   ```
+   [root@biocluster ~]# wget ftp://195.220.108.108/linux/centos/6.7/os/x86_64/Packages/libicu-4.2.1-12.el6.x86_64.rpm
+   [root@biocluster ~]# rpm -ivh libicu-4.2.1-12.el6.x86_64.rpm 
+   [root@biocluster ~]# wget ftp://195.220.108.108/linux/centos/6.7/os/x86_64/Packages/libicu-devel-4.2.1-12.el6.x86_64.rpm
+   [root@biocluster ~]# wget ftp://195.220.108.108/linux/centos/6.7/os/x86_64/Packages/xz-devel-4.999.9-0.5.beta.20091007git.el6.x86_64.rpm
+   [root@biocluster ~]# wget ftp://195.220.108.108/linux/centos/6.7/os/x86_64/Packages/texinfo-4.13a-8.el6.x86_64.rpm
+   [root@biocluster ~]# wget ftp://195.220.108.108/linux/centos/6.7/os/x86_64/Packages/texinfo-tex-4.13a-8.el6.x86_64.rpm
+   [root@biocluster ~]# wget ftp://195.220.108.108/linux/centos/6.7/os/x86_64/Packages/lapack-3.2.1-4.el6.x86_64.rpm
+   [root@biocluster ~]# wget ftp://195.220.108.108/linux/centos/6.7/os/x86_64/Packages/lapack-devel-3.2.1-4.el6.x86_64.rpm
+   [root@biocluster ~]# wget ftp://195.220.108.108/linux/centos/6.7/os/x86_64/Packages/blas-3.2.1-4.el6.x86_64.rpm
+   [root@biocluster ~]# wget ftp://195.220.108.108/linux/centos/6.7/os/x86_64/Packages/blas-devel-3.2.1-4.el6.x86_64.rpm
+   
 
 ## Set up infiniband network
 
