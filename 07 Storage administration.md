@@ -161,6 +161,55 @@ or
 ```
 if the former does not work.
 
+## Creating a new XFS volume
+
+Once you set up RAID and created several hardware-level logical drives, next we should use LVM to create software-level physical and logical volumes. These are VERY DIFFERENT concepts!!! The drive group, logical drive and physical drive in RAID card setting are all hardware level concepts, and once they are completed, what's presented to the user are merely things like `/dev/sda`, `/dev/sdb`, `/dev/sdc` and so on. Next, we need to make software-level LVM to manage these drives and combine them together.
+
+Typically, you want to install Rocks in `/dev/sda`, so this partition is pretty small, in fact 100Gb is more than enough (note that Rocks will partition this to `/dev/sda1`, `/dev/sda2` and so on to install operating system on this logical drive). The `/dev/sdb` and `/dev/sdc` and so on could be dozens or hundreds of terabytes, and they are used as `/export` in our NAS.
+
+To create a new volume, follow the procedure:
+
+1. do `parted /dev/sdb`, use `mklabel gpt` to make a GPT partition table. use `print` to view it, then use `mkpart primary 0% 100%` to automatically create a partition that is optimal (if I use `mkpart primary 0 100%` it will create mis-aligned partitions).
+
+2. create a physical volume which takes up all spaces in `/dev/sdb`:
+
+    ```
+[root@nas-0-0 ~]# pvcreate /dev/sdb1 
+  Writing physical volume data to disk "/dev/sdb1"
+  Physical volume "/dev/sdb1" successfully created
+[root@nas-0-0 ~]# pvscan 
+  PV /dev/sdb1                      lvm2 [27.19 TiB]
+  Total: 1 [27.19 TiB] / in use: 0 [0   ] / in no VG: 1 [27.19 TiB]
+```
+
+3. Create a volume group, which may have one or more physical volumes
+
+    ```
+[root@nas-0-0 ~]# vgcreate nas-0-0 /dev/sdb1
+  Volume group "nas-0-0" successfully created
+[root@nas-0-0 ~]# vgscan
+  Reading all physical volumes.  This may take a while...
+  Found volume group "nas-0-0" using metadata type lvm2
+```
+
+4. Create a logical volume called `export`.
+
+    ```
+[root@nas-0-0 ~]# lvcreate -l 100%FREE -n export nas-0-0
+  Logical volume "export" created
+```
+
+5. Create XFS in the `/export`
+
+    ```
+[root@nas-0-0 ~]# mkfs.xfs /dev/mapper/nas--0--0-export
+```
+
+    Note that default xfs block size is 4096 (bsize=4096 in the screen when running the above command).
+
+6. After nas-0-0 installation is done, add `/dev/mapper/nas--0--0-export /export            xfs     defaults        0 0` to `/etc/fstab`, so that the LVM is mounted to `/export` every time nas-0-0 is started. Additionally, add `/export 10.1.1.1/255.255.0.0(fsid=0,rw,async,insecure,no_root_squash)` to /etc/exports, so that the “/export” directory can be shared to local ib network.
+
+
 ## XFS volume repair
 
 When the system shows IO error, one cannot read/write from the /export directory any more. Umounting and re-mounting shows "mount: strcuture needs cleaning" message. Restarting the computer did not help either. Therefore, we attempated xfs_repair to fix this problem.
