@@ -196,9 +196,9 @@ R is a statistical computing language that is commonly used in bioinformatics. H
 1. log in head node as root.
 2. Install EPEL if you have not done so: `rpm -Uvh https://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm`. You may need to change the version number, depending on your Rocks/CentOS version.
 3. Install R by `yum install R`. Note that yum should automatically search EPEL for R packages, but if not, you can manually force yum to do that by `yum --enablerepo=epel install R`. (See troubleshooting information below if this command fails)
-4. Go to `/usr/cache/yum/epel/packages` (actually, check `/etc/yum.conf` to know the exact location) to know what packages are just installed. Typically, 5-10 packages are installed to have full functionality of R in the system.
-5. Now copy all these \*.rpm files to `/export/rocks/install/contrib/6.1.1/x86_64/RPMS` (change the path to suite your own system!). 
-6. Now go to `/export/rocks/install/site_profile/6.1.1/nodes`, edit `extend-compute.xml`, and add in the name of the packages (see an example below).
+4. Go to `/usr/cache/yum/epel/packages` (actually, check `/etc/yum.conf` to know the exact location) to know what packages are just installed. Typically, 10-20 packages are installed to have full functionality of R in the system.
+5. Now copy all these \*.rpm files to `/export/rocks/install/contrib/6.2/x86_64/RPMS` (change the path to suite your own system!). 
+6. Now go to `/export/rocks/install/site_profile/6.2/nodes`, edit `extend-compute.xml`, and add in the name of the packages (see an example below).
 7. This is totally optional and I do not actually use it. If you want to use graphical interface in compute node (which does not make sense to me), since X11 is required, use `rocks add host attr compute-0-0 X11` to enable this.
 8. Then `cd /export/rocks/install`, type `rocks create distro`, then re-install all compute nodes. (Hint: you can do `rocks set host boot compute action=install` so all compute nodes re-install themselves after rebooting).
 
@@ -212,23 +212,15 @@ R is a statistical computing language that is commonly used in bioinformatics. H
 <package>R-java-devel</package>
 <package>blas</package>
 <package>blas-devel</package>
-<package>ecj</package>
-<package>gcc-java</package>
 <package>lapack</package>
 <package>lapack-devel</package>
-<package>libgcj-devel</package>
-<package>libgcj-src</package>
 <package>libicu</package>
 <package>libicu-devel</package>
+<package>libRmath</package>
+<package>libRmath-devel</package>
 <package>texinfo</package>
 <package>texinfo-tex</package>
 <package>xz-devel</package>
-<package>cmake</package>
-<package>bzip2-devel</package>
-<package>gcc-c++</package>
-<package>libart_lgpl</package>
-<package>libgcj</package>
-<package>libstdc++-devel</package>
 ```
 
 - Troubleshooting
@@ -265,7 +257,7 @@ Error: Package: R-core-devel-3.2.3-1.el6.x86_64 (epel)
    [root@biocluster ~]# wget ftp://195.220.108.108/linux/centos/6.7/os/x86_64/Packages/lapack-devel-3.2.1-4.el6.x86_64.rpm
    [root@biocluster ~]# wget ftp://195.220.108.108/linux/centos/6.7/os/x86_64/Packages/blas-3.2.1-4.el6.x86_64.rpm
    [root@biocluster ~]# wget ftp://195.220.108.108/linux/centos/6.7/os/x86_64/Packages/blas-devel-3.2.1-4.el6.x86_64.rpm
-   
+   ```
 
 ## Set up infiniband network
 
