@@ -178,7 +178,7 @@ $ yum remove mlocate
 ```
 It will show that it is removed successfully, with a warning that `warning: /etc/updatedb.conf saved as /etc/updatedb.conf.rpmsave`.
 
-# head node restrictions
+## head node restrictions
 
 Head node should be used for user login and job submission and external data download only. You may want to restrict the amount of memory used in the head node by each user, to prevent somebody from running a job with large chunks of memory (when swap is used, the head node becomes extremely slow). For example, adding the following
 
@@ -258,6 +258,23 @@ Error: Package: R-core-devel-3.2.3-1.el6.x86_64 (epel)
    [root@biocluster ~]# wget ftp://195.220.108.108/linux/centos/6.7/os/x86_64/Packages/blas-3.2.1-4.el6.x86_64.rpm
    [root@biocluster ~]# wget ftp://195.220.108.108/linux/centos/6.7/os/x86_64/Packages/blas-devel-3.2.1-4.el6.x86_64.rpm
    ```
+
+## Change compute node drive partition
+
+By default Rocks partition the drive in computer node to 16G /, 1G swap, 4G /var and others to /state/partitionX. Many of the programs that we use need to use large temporary files or space, so we need to re-define the partition table for compute nodes. Edit /export/rocks/install/site-profiles/6.2/nodes/replace-partition.xml (or “cp skeleton.xml replace-partition.xml“ if it does not exist). Add the section below to the file.
+
+```
+
+<pre>
+echo "clearpart --all --initlabel --drives=sda
+part /boot --size 1000 --ondisk sda
+part / --size 1000000 --ondisk sda
+part swap --size 16000 --ondisk sda
+part /state/partition1 --size 1 --grow --ondisk sda" > /tmp/user_partition_info
+</pre>
+```
+
+Then reinstall compute nodes. If the partition size does not change after reinstall, then you should follow instructions [here](http://central6.rocksclusters.org/roll-documentation/base/6.1.1/customization-partitioning.html), to `rocks remove partition` and use `nukeit.sh` to remove the file .rocks-release from the first partition of each disk on the compute node.
 
 ## Set up infiniband network
 
