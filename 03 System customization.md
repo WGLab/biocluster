@@ -45,6 +45,46 @@ lrwxrwxrwx 1 root root   21 Feb 10 05:49 latest -> /usr/java/jdk1.7.0_51
 
 So the `/usr/java/lastest/bin` in the PATH already point to version 1.7 correctly.
 
+## Adjust system time
+
+In case you did not change BIOS to set up the correct time, you can use a few commands to make sure that the time is set up correctly.
+
+First check the hardware clock with the following command.
+
+```
+[root@biocluster ~]# date
+Wed Feb 10 11:45:21 PST 2016
+[root@biocluster ~]# hwclock --show
+Wed 10 Feb 2016 11:45:40 AM PST  -0.578490 seconds
+```
+
+I am running the commands in the afternoon, so this time is wrong and we need to change it.
+
+By default the ntp package is installed and we can do:
+
+```
+[root@biocluster ~]# ntpdate pool.ntp.org
+10 Feb 16:40:51 ntpdate[9205]: step time server 65.182.224.39 offset 17684.036678 sec
+
+[root@biocluster ~]# date
+Wed Feb 10 16:41:01 PST 2016
+```
+
+or you can manually update: 
+
+```
+date --set "10 Feb 2015 16:45 PST"
+```
+
+Obviously in the above command you must set your date, time and time zone correctly.
+
+Now as root, synchronize the hardware clock to the current system time as local time.
+
+```
+hwclock --systohc --localtime
+```
+
+Now the hardware clock is re-adjusted to the system time and both now point to the local time (which was synchronized to NTP server).
 
 ## Install R
 
@@ -162,38 +202,6 @@ qconf -mq all.q
 ```
 
 This will open an interactive vi session. Look for the `pe_list` line, and add `smp` to that line. Save the file and exit vi. You should now be able to use the smp PE.
-
-## Adjust system time
-
-First check the hardware clock with the following command.
-
-```
-hwclock --show    
-```
-
-If your hardware clock is not set to your local time, then you must set the system time to local time as root.
-
-If you installed the ntp package you can: 
-
-```
-ntpdate pool.ntp.org
-```
-
-or you can manually update: 
-
-```
-date --set "5 Aug 2012 12:54 IST"
-```
-
-Obviously in the above command you must set your date, time and time zone correctly.
-
-Now as root, synchronize the hardware clock to the current system time as local time.
-
-```
-hwclock --systohc --localtime
-```
-
-Now the hardware clock is re-adjusted to the system time and both now point to the local time.
 
 ## Change updatedb schedule
 
