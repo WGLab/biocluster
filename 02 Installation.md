@@ -12,6 +12,8 @@ After starting up head node by the DVD drive, just follow the instructions shown
 
 - packages to install: select everything except kvm, bio and condor. KVM (kernel virtual machine) is probably not something that you really need. bio (bioinformatics tools) has very limited and typically outdated tools which you can install yourself easily. condor is another cluster management system that you do not need if you have SGE installed in the cluster. 
 
+- partition: you can select automatic partition, which will work just fine. Or you can select to have 1G for `/boot`, 16G for swap, and the rest to `/`. Ideally, you would need to specify a `/export` partition but recent Rocks distributions no longer requires it (instead, it creates a symbolic link from `/export` to `/state/partition1`). Since we will be using a dedicated NFS server, it is not really necessary to have dedicated `/export`.
+
 ## Storage node
 
 The next step is to install storage node. You can certainly install compute node next as well, it does not really matter much. You can follow the instructions for compute nodes below (except to select "NAS" as the "Appliance").
