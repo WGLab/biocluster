@@ -290,3 +290,13 @@ rocks set host interface name compute-0-4 iface=ib0 name=compute-0-4-ib
 rocks sync config
 rocks sync host network compute-0-4
 ```
+
+## Configure a host as job submission host
+
+Occasionally you may want to make a specific host as job submission host (especially if you opened the eth1 in this host). This can be easily doen by:
+
+```
+rocks set host attr compute-0-0 submit_host true
+```
+
+Then reinstall compute-0-0.
