@@ -259,6 +259,10 @@ Error: Package: R-core-devel-3.2.3-1.el6.x86_64 (epel)
    [root@biocluster ~]# wget ftp://195.220.108.108/linux/centos/6.7/os/x86_64/Packages/blas-devel-3.2.1-4.el6.x86_64.rpm
    ```
 
+## Install optional packages
+
+Other optional packages can be installed in a similar manner as described above. For example, a useful package is `screen`, which allows easy terminal management and a tutorial is [here](http://www.tecmint.com/screen-command-examples-to-manage-linux-terminals/).
+
 ## Change compute node drive partition
 
 By default Rocks partition the drive in computer node to 16G /, 1G swap, 4G /var and others to /state/partitionX. Many of the programs that we use need to use large temporary files or space, so we need to re-define the partition table for compute nodes. Edit /export/rocks/install/site-profiles/6.2/nodes/replace-partition.xml (or “cp skeleton.xml replace-partition.xml“ if it does not exist). Add the section below to the file.
