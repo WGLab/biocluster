@@ -206,6 +206,12 @@ Now do this:
 
 Now compute-0-0 can access internet directly through eth1.
 
+## 10G ethernet specific settings
+
+Instead of IB, you can install 10G ethernet instead. This allows fast access to Internet for uploading and downloading files.
+
+The hardware requirement depends very much on the specific network settings that you have. In my case, there is a 10G fiber switch in the server room, so we only need three things: (1) a fiber cable (for example, we use BELKIN 5M LC/LC OM3 50/125 FIBER). (2) A 10G ethernet card (for example, Intel X520-DA2). (3) a 10G-SR transreceiver (for example, Intel E10GSFPSR). Basically, we connect a fiber cable to the transreceiver which switch to copper and connect to SFP port in the ethernet card.
+
 
 ## Useful command line tricks
 
