@@ -16,6 +16,14 @@ The NAS is a basically a compute box with many hard drives. Typical set up are 3
 
 The instructions below refer to LSI controllers.
 
+## Creating virtual drives (VD)
+
+To illustrate this by a simple example, suppose I get a 36-drive 4U storage server, with an external SAS cable connecting to a 45-drive 4U JBOD. So in total I have 81 drives. Due to the limitations of RAID6 (you cannot have too many drives in a RAID 6), the 81 drives needs to be split into 3 drive groups, so we can do a 27+26+26+2. We will use 2 drives as global hot spares, so that whenever a drive fails, the RAID will automatically rebuild using one of the hot spares.
+
+Depending on BIOS settings in your motherboard, you can either perform the VD creation directly within motherboard BIOS (only for very new motherboards), or perfrom the creation after LSI's own BIOS screen. Essentially you create 3 drive groups and specify the number of drives within each group.
+
+One slight complication is that we want to install Rocks in a separate and smalll virtual drives, so that we can keep re-install the operating system in the future without damaging any data stored in the NAS array. To accomplish this, within the first VD, we will create a logical drive of 100GB, and another logical drive that takes the rest of the space. So in the end, we have `/dev/sda`, `/dev/sdb`, `/dev/sdc`, `/dev/sdd`. The first VD is 100G, yet the other three VDs have large storage capacity.
+
 ## MegaRaid Hardware information
 
 System status information can be collected using lsiget command, which is available at  http://mycusthelp.info/LSI/_cs/AnswerDetail.aspx?sSessionID=&aid=8264.
@@ -169,7 +177,37 @@ Typically, you want to install Rocks in `/dev/sda`, so this partition is pretty 
 
 To create a new volume, follow the procedure:
 
-1. do `parted /dev/sdb`, use `mklabel gpt` to make a GPT partition table. use `print` to view it, then use `mkpart primary 0% 100%` to automatically create a partition that is optimal (if I use `mkpart primary 0 100%` it will create mis-aligned partitions).
+1. do `parted /dev/sdb`, use `mklabel gpt` to make a GPT partition table (default is MSDOS which does not handle >4TB partition). use `print` to view it, then use `mkpart primary 0% 100%` to automatically create a partition that is optimal (if I use `mkpart primary 0 100%` it will create mis-aligned partitions). An example is given below:
+
+    ```
+(parted) print                                                            
+Model: AVAGO MR9361-8i (scsi)
+Disk /dev/sdb: 99.9TB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+
+Number  Start  End  Size  Type  File system  Flags
+
+(parted) mklabel gpt                                                      
+Warning: The existing disk label on /dev/sdb will be destroyed and all data on this disk will be lost. Do you want to continue?
+Yes/No? yes                                                               
+(parted) print                                                            
+Model: AVAGO MR9361-8i (scsi)
+Disk /dev/sdb: 99.9TB
+Sector size (logical/physical): 512B/512B
+Partition Table: gpt
+
+Number  Start  End  Size  File system  Name  Flags
+(parted) mkpart primary 0% 100%   
+(parted) print                                                            
+Model: AVAGO MR9361-8i (scsi)
+Disk /dev/sdb: 99.9TB
+Sector size (logical/physical): 512B/512B
+Partition Table: gpt
+
+Number  Start   End     Size    File system  Name     Flags
+ 1      1049kB  99.9TB  99.9TB               primary
+```
 
 2. create a physical volume which takes up all spaces in `/dev/sdb`:
 
@@ -178,40 +216,69 @@ To create a new volume, follow the procedure:
   Writing physical volume data to disk "/dev/sdb1"
   Physical volume "/dev/sdb1" successfully created
 [root@nas-0-0 ~]# pvscan 
-  PV /dev/sdb1                      lvm2 [27.19 TiB]
-  Total: 1 [27.19 TiB] / in use: 0 [0   ] / in no VG: 1 [27.19 TiB]
+  PV /dev/sdb1                      lvm2 [90.86 TiB]
+  Total: 1 [90.86 TiB] / in use: 0 [0   ] / in no VG: 1 [90.86 TiB]
 ```
 
-3. Create a volume group, which may have one or more physical volumes
+3. If you have multiple logical drives, do this for `/dev/sdc`, `/dev/sdd` and so on.
+    ```
+[root@nas-0-7 ~]# pvscan 
+  PV /dev/sdb1                      lvm2 [90.86 TiB]
+  PV /dev/sdc1                      lvm2 [87.32 TiB]
+  PV /dev/sdd1                      lvm2 [87.32 TiB]
+  Total: 3 [265.49 TiB] / in use: 0 [0   ] / in no VG: 3 [265.49 TiB]
+```
+
+4. Create a volume group, which may have one or more physical volumes
 
     ```
-[root@nas-0-0 ~]# vgcreate nas-0-0 /dev/sdb1
+[root@nas-0-0 ~]# vgcreate nas-0-0 /dev/sdb1 /dev/sdc1 /dev/sdd1
   Volume group "nas-0-0" successfully created
 [root@nas-0-0 ~]# vgscan
   Reading all physical volumes.  This may take a while...
   Found volume group "nas-0-0" using metadata type lvm2
 ```
 
-4. Create a logical volume called `export`.
+4. Create a logical volume called `export` that takes up all space in the nas-0-0 volume group.
 
     ```
 [root@nas-0-0 ~]# lvcreate -l 100%FREE -n export nas-0-0
   Logical volume "export" created
 ```
 
-5. Create XFS in the `/export`
+5. Create XFS in the `/export` (if `mkfs.xfs` is not available, do a `yum install xfsprog` first):
 
     ```
 [root@nas-0-0 ~]# mkfs.xfs /dev/mapper/nas--0--0-export
+meta-data=/dev/mapper/nas--0--0-export isize=256    agcount=266, agsize=268435455 blks
+         =                       sectsz=512   attr=2, projid32bit=0
+data     =                       bsize=4096   blocks=71266857984, imaxpct=1
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0
+log      =internal log           bsize=4096   blocks=521728, version=2
+         =                       sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
 ```
 
     Note that default xfs block size is 4096 (bsize=4096 in the screen when running the above command).
 
 6. After nas-0-0 installation is done, add `/dev/mapper/nas--0--0-export /export            xfs     defaults        0 0` to `/etc/fstab`, so that the LVM is mounted to `/export` every time nas-0-0 is started. Additionally, add `/export 10.1.1.1/255.255.0.0(fsid=0,rw,async,insecure,no_root_squash)` to /etc/exports, so that the “/export” directory can be shared to local ib network.
 
-## Extending the XFS volume by JBOD
+    ```
+[root@nas-0-0 ~]# moutn /export
+[root@nas-0-0 ~]# df -h
+Filesystem            Size  Used Avail Use% Mounted on
+/dev/sda1              58G  3.5G   52G   7% /
+tmpfs                  64G     0   64G   0% /dev/shm
+/dev/mapper/nas--0--0-export
+                      266T   41M  266T   1% /export
+```
 
-First, create two drive groups in LSI WEBIOS, and the system will treat them as `/dev/sdd` and `/dev/sde`, respectively. Now go to Linux, type `parted /dev/sdd`, then `mklabel gpt`, then `mkpart primary 0% 100%`, then “quit”. Then `mkfs.xfs /dev/sdd1` (this step is most likely not needed). Do the same for `/dev/sde1`. Now `pvcreate /dev/sdd1` and `pvcreate /dev/sde1`. Use “pvscan” to confirm two physical volumes created. use “vgdisplay” to confirm FREE PE=0. Then `vgextend nas-0-1 /dev/sdd1` and `vgextend nas-0-1 /dev/sde1`, then “vgdisplay” again. Check the FREE size. Now `lvextend -L +100%FREE /dev/nas-0-1/export`, type “df -h” to check size. Then `xfs_growfs /dev/nas-0-1/export`, and type “df -h” again to check if the size has changed to the correct size. 
+    Now the directory is accessible as `/export` in the local storage server.
+
+## Extending the XFS volume by additional JBOD
+
+Suppose that in the future, you want to add additional JBOD to the system, yet extending the size of the `/export` directory. This can be accomplished by the following procedure: First, create two drive groups in LSI WEBBIOS, and the system will treat them as `/dev/sdd` and `/dev/sde`, respectively. Now go to Linux, type `parted /dev/sdd`, then `mklabel gpt`, then `mkpart primary 0% 100%`, then “quit”. Then `mkfs.xfs /dev/sdd1` (this step is most likely not needed). Do the same for `/dev/sde1`. Now `pvcreate /dev/sdd1` and `pvcreate /dev/sde1`. Use “pvscan” to confirm two physical volumes created. use “vgdisplay” to confirm FREE PE=0. Then `vgextend nas-0-1 /dev/sdd1` and `vgextend nas-0-1 /dev/sde1`, then “vgdisplay” again. Check the FREE size. Now `lvextend -L +100%FREE /dev/nas-0-1/export`, type “df -h” to check size. Then `xfs_growfs /dev/nas-0-1/export`, and type `df -h` again to check if the size has changed to the correct size. 
 
 
 ## XFS volume repair
@@ -231,7 +298,7 @@ Note that destroying the log may cause corruption -- please attempt a mount
 of the filesystem before doing this.
 [root@nas-0-1 ~]# mount /export/
 mount: Structure needs cleaning
-[root@nas-0-1 ~]# mount /export 
+[root@nas-0-1 ~]# umount /export 
 mount: Structure needs cleaning
 [root@nas-0-1 ~]# xfs_repair -L /dev/mapper/nas--0--1-export
 Phase 1 - find and verify superblock...
