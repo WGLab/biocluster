@@ -20,9 +20,11 @@ The instructions below refer to LSI controllers.
 
 To illustrate this by a simple example, suppose I get a 36-drive 4U storage server, with an external SAS cable connecting to a 45-drive 4U JBOD. So in total I have 81 drives. Due to the limitations of RAID6 (you cannot have too many drives in a RAID 6), the 81 drives needs to be split into 3 drive groups, so we can do a 27+26+26+2. We will use 2 drives as global hot spares, so that whenever a drive fails, the RAID will automatically rebuild using one of the hot spares.
 
-Depending on BIOS settings in your motherboard, you can either perform the VD creation directly within motherboard BIOS (only for very new motherboards), or perfrom the creation after LSI's own BIOS screen. Essentially you create 3 drive groups and specify the number of drives within each group.
+Depending on BIOS settings in your motherboard, you can either perform the DG/VD creation directly within motherboard BIOS (only for very new motherboards), or perfrom the creation after LSI's own BIOS screen. Essentially you create 3 drive groups and specify the number of drives within each group. Remember that each drive group must use RAID6. Do not use RAID5!!!
 
-One slight complication is that we want to install Rocks in a separate and smalll virtual drives, so that we can keep re-install the operating system in the future without damaging any data stored in the NAS array. To accomplish this, within the first VD, we will create a logical drive of 100GB, and another logical drive that takes the rest of the space. So in the end, we have `/dev/sda`, `/dev/sdb`, `/dev/sdc`, `/dev/sdd`. The first VD is 100G, yet the other three VDs have large storage capacity.
+(It requires some explanation why RAID5 cannot be used: the main reason is that drives tend to have silent data corruption, so if a drive in RAID5 fails and if you rebuild the array, the rebuilding process may not be successful. RAID6 is more tolerant to this situation. Typically, the RAID card will do surveillance of all drives once in a while to detect these types of drive errors)
+
+One slight complication is that we want to install Rocks in a separate and smalll virtual drives, so that we can keep re-install the operating system in the future without damaging any data stored in the NAS array. To accomplish this, within the first drive group, we will create a logical drive of 100GB, and another logical drive that takes the rest of the space. So in the end, we have `/dev/sda`, `/dev/sdb`, `/dev/sdc`, `/dev/sdd`. The first VD is 100G, yet the other three VDs have large storage capacity.
 
 ## MegaRaid Hardware information
 
