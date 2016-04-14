@@ -14,7 +14,9 @@ For head node, make sure to use enterprise drives, and use a RAID 1. Size does n
 
 The NAS is a basically a compute box with many hard drives. Typical set up are 36 drives within a 4U enclosure, or 18 drives within a 2U enclosure. These drives are connected to a SAS RAID controller and a SAS expander (typically when you buy the computer box, these components are already there so you do not need to do anything). LSI is the most popular RAID controller, but some manufacturers such as Dell has their own controllers. My preference is to use LSI; even when I have access to a Dell machine with H700 controllers, I still unplug it and install a new LSI card. The reason is that manufacturers such as Dell/IBM/HP make things difficult for users to customize so that users can only buy from them with high premium; for example, the SAS cable for H700 is NOT compatible with a real SAS cable that everybody else uses, even though they have identical appearance and have identical name and identical interface. It drived me crazy once, and I cannot imagine how other users can possibly figure this out.
 
-The instructions below refer to LSI controllers.
+The instructions below refer to LSI controllers. A general overview of the procedure is described in the figure below.
+
+![biocluster-storage](https://cloud.githubusercontent.com/assets/5926328/14517371/70889e5e-01c1-11e6-8ee9-50866258d0da.png)
 
 ## Creating virtual drives (VD)
 
