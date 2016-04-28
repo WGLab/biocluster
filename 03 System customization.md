@@ -282,18 +282,61 @@ Then reinstall compute nodes. If the partition size does not change after reinst
 
 ## Set up infiniband network
 
-Many infiniband switches have built-in subnet manager, which can manage the fabric automatically and ensure proper communications between the IB hosts. Just in case the IB switch does not have this functionality, you need to install a subnet manager in one of the nodes in the network. I recommend that you should install it in the storage node `nas-0-0`, because it is typically the most stable host in the entire network. Just do a `rocks add host attr nas-0-0 subnetmanager true` and then `rocks sync config`.
+Many infiniband switches have built-in subnet manager, which can manage the fabric automatically and ensure proper communications between the IB hosts. Just in case the IB switch does not have this functionality, you need to install a subnet manager in one of the nodes in the network. By default, the head node already has opensm installed and enabled, if the server has an IB card during installation (check this by `service opensm status` in head node). Nevertheless, I recommend that you should install it in the storage node `nas-0-0`, because it is typically the most stable host in the entire network. Just do a `rocks add host attr nas-0-0 subnetmanager true` and then `rocks sync config`.
 
-After installation of compute nodes, you need to manually set up the network for infiniband. Note that you should not edit the typical files such as `/etc/sysconfig/network-scripts/ifcfg-ib0`; it may work to configure the network, but it will not survive the next re-installation of the compute node. More explanation is given in [this section](05 Network administration.md). To ensure that the network information is stored within the central MySQL database in head node, you must use Rocks system command. An example is given below:
+The next thing is to set up a new subnet specifically for IB traffic, and we can just use 192.168.0.0 subnet. To do this, use
 
 ```
-rocks add host interface compute-0-4 ib0
-rocks set host interface ip compute-0-4 iface=ib0 ip=192.168.1.249
-rocks set host interface subnet compute-0-4 iface=ib0 subnet=ipoib
-rocks set host interface name compute-0-4 iface=ib0 name=compute-0-4-ib
-rocks sync config
-rocks sync host network compute-0-4
+[root@biocluster ~]# rocks list network
+NETWORK  SUBNET        NETMASK       MTU   DNSZONE   SERVEDNS
+private: 10.1.0.0      255.255.0.0   1500  local     True    
+public:  128.125.248.0 255.255.254.0 1500  wglab.org False   
+[root@biocluster ~]# rocks add network ipoib 192.168.0.0 255.255.0.0 mtu=65520 servedns=true
+[root@biocluster ~]# rocks list network
+NETWORK  SUBNET        NETMASK       MTU    DNSZONE   SERVEDNS
+ipoib:   192.168.0.0   255.255.0.0   65520  ipoib     True    
+private: 10.1.0.0      255.255.0.0   1500   local     True    
+public:  128.125.248.0 255.255.254.0 1500   wglab.org False   
 ```
+
+After installation of compute nodes, you need to manually set up the network for infiniband. Note that you should not edit the typical files such as `/etc/sysconfig/network-scripts/ifcfg-ib0`; it may work to configure the network, but it will not survive the next re-installation of the compute node. More explanation is given in [this section](05 Network administration.md). To ensure that the network information is stored within the central MySQL database in head node, you must use Rocks system command. 
+
+We first set up the ib in head node:
+
+```
+[root@biocluster ~]# rocks list host interface biocluster
+SUBNET  IFACE MAC                                                         IP             NETMASK       MODULE NAME       VLAN OPTIONS CHANNEL
+private eth0  04:7D:7B:47:6A:04                                           10.1.1.1       255.255.0.0   ------ biocluster ---- ------- -------
+public  eth1  04:7D:7B:47:6A:05                                           128.125.248.41 255.255.254.0 ------ biocluster ---- ------- -------
+------- ib0   80:00:00:48:FE:80:00:00:00:00:00:00:00:02:C9:03:00:50:5E:95 -------------- ------------- ------ ---------- ---- ------- -------
+[root@biocluster ~]# rocks remove host interface biocluster iface=ib0
+[root@biocluster ~]# rocks add host interface biocluster iface=ib0 ip=192.168.1.1 mac=80:00:00:48:FE:80:00:00:00:00:00:00:00:02:C9:03:00:50:5E:95 subnet=ipoib name=biocluster-ib
+[root@biocluster ~]# rocks list host interface biocluster
+SUBNET  IFACE MAC                                                         IP             NETMASK       MODULE NAME          VLAN OPTIONS CHANNEL
+private eth0  04:7D:7B:47:6A:04                                           10.1.1.1       255.255.0.0   ------ biocluster    ---- ------- -------
+public  eth1  04:7D:7B:47:6A:05                                           128.125.248.41 255.255.254.0 ------ biocluster    ---- ------- -------
+ipoib   ib0   80:00:00:48:FE:80:00:00:00:00:00:00:00:02:C9:03:00:50:5E:95 192.168.1.1    255.255.0.0   ------ biocluster-ib ---- ------- -------
+[root@biocluster ~]# rocks sync host network biocluster
+```
+
+The last command is required to make the change effective immediately.
+
+Next, we set up each compute node. An example is given below:
+
+```
+[root@biocluster ~]# rocks list host interface nas-0-0
+SUBNET  IFACE MAC                                                         IP           NETMASK     MODULE NAME    VLAN OPTIONS CHANNEL
+private eth0  00:25:90:85:d1:50                                           10.1.255.254 255.255.0.0 ------ nas-0-0 ---- ------- -------
+------- ib0   80:00:00:48:fe:80:00:00:00:00:00:00:00:02:c9:03:00:0c:c1:73 ------------ ----------- ------ ------- ---- ------- -------
+------- eth1  00:25:90:85:d1:51                                           ------------ ----------- ------ ------- ---- ------- -------
+------- eth3  00:25:90:85:d1:53                                           ------------ ----------- ------ ------- ---- ------- -------
+------- eth2  00:25:90:85:d1:52                                           ------------ ----------- ------ ------- ---- ------- -------
+[root@biocluster ~]# rocks remove host interface nas-0-0 iface=ib0
+[root@biocluster ~]# rocks add host interface nas-0-0 iface=ib0 ip=192.168.255.254 mac=80:00:00:48:fe:80:00:00:00:00:00:00:00:02:c9:03:00:0c:c1:73 subnet=ipoib name=nas-0-0-ib
+[root@biocluster ~]# rocks sync host network nas-0-0   
+```
+
+
 
 ## Configure a host as job submission host
 
