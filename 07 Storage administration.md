@@ -403,7 +403,6 @@ First go to NAS and test local performance of the RAID array:
 
 ```
 [root@nas-0-0 BACKUP]# ~/admin/iozone3_434/src/current/iozone -R -l 5 -u 5 -r 64k -s 64g -F file1 file2 file3 file4 file5 -i 0 -i 1
-
 "  Initial write " 2622417.06 
 "        Rewrite " 2562444.69 
 "           Read " 1722868.50 
@@ -412,6 +411,13 @@ First go to NAS and test local performance of the RAID array:
 
 Next go to a compute node and cd to `/share/datasets` and test the NFS performance:
 
+```
+[root@compute-0-0 datasets]#  ~/admin/iozone3_434/src/current/iozone -R -l 5 -u 5 -r 64k -s 64g -F file1 file2 file3 file4 file5 -i 0 -i 1
+"  Initial write " 1054813.91 
+"        Rewrite " 1077901.91 
+"           Read "  491567.32 
+"        Re-read "  495062.38 
+```
 
 
 
