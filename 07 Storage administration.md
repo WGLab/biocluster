@@ -354,3 +354,50 @@ Recent version of Rocks begin to incorporate ZFS as an optional roll that you ca
 The key feature of ZFS is block-level CRC, which is supposed to detect silent data corruption. In addition, ZFS somewhat serves as if it is a software RAID as well as volume manager (rather than a simple file system), and can take care of data redundancy and rebuilding by itself. In other words, you can think of ZFS as a LSI card plus LVM2 plus file system. An excellent background description on ZFS can be found [here](http://www.datamation.com/data-center/the-zfs-story-clearing-up-the-confusion-1.html).
 
 It is your own choice whether to use XFS or ZFS; as long as you do not use any other file systems, things will be probably fine for a small bioinformatics lab either way.
+
+## Performance benchmarking
+
+There are several ways to measure performance
+
+```
+[root@biocluster ~]# hdparm -tT /dev/sda
+/dev/sda:
+ Timing cached reads:   19416 MB in  2.00 seconds = 9717.68 MB/sec
+ Timing buffered disk reads: 382 MB in  3.01 seconds = 126.78 MB/sec
+
+ [root@nas-0-0 ~]# hdparm -tT /dev/sda 
+/dev/sda:
+ Timing cached reads:   21334 MB in  2.00 seconds = 10677.39 MB/sec
+ Timing buffered disk reads: 4764 MB in  3.00 seconds = 1587.54 MB/sec
+```
+
+The biocluster used a typical hard drive, but nas-0-0 used a RAID6 array with much improved performance.
+
+Similarly, we can use `dd` command to evaluate performance
+
+```
+[root@biocluster ~]# dd if=/dev/zero of=testfile bs=8k count=1000k
+1024000+0 records in
+1024000+0 records out
+8388608000 bytes (8.4 GB) copied, 64.8641 s, 129 MB/s
+[root@biocluster ~]# dd if=testfile of=/dev/null bs=8k
+1024000+0 records in
+1024000+0 records out
+8388608000 bytes (8.4 GB) copied, 1.45163 s, 5.8 GB/s
+
+[root@nas-0-0 ~]# dd if=/dev/zero of=testfile bs=8k count=1000k
+1024000+0 records in
+1024000+0 records out
+8388608000 bytes (8.4 GB) copied, 5.3096 s, 1.6 GB/s
+[root@nas-0-0 ~]# dd if=testfile of=/dev/null bs=8k
+1024000+0 records in
+1024000+0 records out
+8388608000 bytes (8.4 GB) copied, 1.1867 s, 7.1 GB/s
+```
+
+The read performance is very good because the files are cached. You may want to increase the count to test the read performance in a more realistic fashion.
+
+
+
+
+
