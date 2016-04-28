@@ -397,6 +397,25 @@ Similarly, we can use `dd` command to evaluate performance
 
 The read performance is very good because the files are cached. You may want to increase the count to test the read performance in a more realistic fashion.
 
+Finally, we can use professional software such as IOZone to perform the benchmarking. Download source code from http://www.iozone.org/ and then unpack, then build the executable as `make linux-AMD64`. The automatic testing (`-a` argument) is not so informative as the max file size used is only 512MB, so we should use different sets of commands and test processing multiple files together.
+
+First go to NAS and test local performance of the RAID array:
+
+```
+[root@nas-0-0 BACKUP]# ~/admin/iozone3_434/src/current/iozone -R -l 5 -u 5 -r 64k -s 64g -F file1 file2 file3 file4 file5 -i 0 -i 1
+
+"  Initial write " 2622417.06 
+"        Rewrite " 2562444.69 
+"           Read " 1722868.50 
+"        Re-read " 1718255.59 
+```
+
+Next go to a compute node and cd to `/share/datasets` and test the NFS performance:
+
+
+
+
+
 
 
 
