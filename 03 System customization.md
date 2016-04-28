@@ -336,6 +336,65 @@ private eth0  00:25:90:85:d1:50                                           10.1.2
 [root@biocluster ~]# rocks sync host network nas-0-0   
 ```
 
+## Enable web access to frontend
+
+The general procedure is described [here](http://central6.rocksclusters.org/roll-documentation/base/6.1.1/enable-www.html). Briefly, 
+
+```
+[root@biocluster ~]# rocks report host firewall localhost
+<file name="/etc/sysconfig/iptables" perms="500">
+*nat
+#  MASQUERADE (host) : 
+-A POSTROUTING -o eth1 -j MASQUERADE
+COMMIT
+
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD DROP [0:0]
+:OUTPUT ACCEPT [0:0]
+#  A10-REJECT-411-TCP (host) : 
+-A INPUT -p tcp --dport 372 -j REJECT --sport 1024:65535
+#  A10-REJECT-411-UDP (host) : 
+-A INPUT -p udp --dport 372 -j REJECT --sport 1024:65535
+#  A15-ALL-LOCAL (global) : 
+-A INPUT -j ACCEPT -i lo
+#  A20-ALL-PRIVATE (global) : 
+-A INPUT -i eth0 -j ACCEPT
+#  A20-SSH-PUBLIC (global) : 
+-A INPUT -i eth1 -p tcp --dport ssh -j ACCEPT -m state --state NEW
+#  A30-RELATED-PUBLIC (global) : 
+-A INPUT -i eth1 -j ACCEPT -m state --state RELATED,ESTABLISHED
+#  A40-HTTPS-PUBLIC-LAN (host) : 
+-A INPUT -i eth1 -p tcp --dport https -j ACCEPT -m state --state NEW --source &Kickstart_PublicNetwork;/&Kickstart_PublicNetmask;
+#  A40-WWW-PUBLIC-LAN (host) : 
+-A INPUT -i eth1 -p tcp --dport www -j ACCEPT -m state --state NEW --source &Kickstart_PublicNetwork;/&Kickstart_PublicNetmask;
+#  A50-FORWARD-RELATED (host) : 
+-A FORWARD -i eth1 -o eth0 -j ACCEPT -m state --state RELATED,ESTABLISHED
+#  A60-FORWARD (host) : 
+-A FORWARD -i eth0 -j ACCEPT
+#  R10-GANGLIA-UDP (host) : block ganglia traffic from non-private interfaces
+-A INPUT -p udp --dport 8649 -j REJECT
+#  R20-MYSQL-TCP (host) : block mysql traffic from non-private interfaces
+-A INPUT -p tcp --dport 3306 -j REJECT
+#  R30-FOUNDATION-MYSQL (host) : block foundation mysql traffic from non-private interfaces
+-A INPUT -p tcp --dport 40000 -j REJECT
+#  R900-PRIVILEGED-TCP (global) : 
+-A INPUT -i eth1 -p tcp -j REJECT --dport 0:1023
+#  R900-PRIVILEGED-UDP (global) : 
+-A INPUT -i eth1 -p udp -j REJECT --dport 0:1023
+COMMIT
+</file>
+[root@biocluster ~]# rocks remove firewall host=localhost rulename=A40-WWW-PUBLIC-LAN
+host list: ['localhost']
+checking for host biocluster
+[root@biocluster ~]# rocks add firewall host=localhost network=public protocol=tcp service=www chain=INPUT action=ACCEPT flags="-m state --state NEW --source 0.0.0.0/0.0.0.0" rulename=A40-WWW-PUBLIC-NEW
+host list: ['localhost']
+checking for host biocluster
+[root@biocluster ~]# rocks sync host firewall localhost
+```
+
+We delete the A40-WWW-PUPBLIC-LAN and create a new A40-WWW-PUBLIC-NEW rule above, which allows web traffic from any source to flow in and out of the frontend. By default, we only allow those local subnet (within the same netmask) to access the frontend.
+
 
 
 ## Configure a host as job submission host
@@ -347,3 +406,7 @@ rocks set host attr compute-0-0 submit_host true
 ```
 
 Then reinstall compute-0-0.
+
+
+
+
