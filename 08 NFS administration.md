@@ -57,7 +57,8 @@ Some of the following points can be used to improve performance:
 2. In head node, Modify ``/etc/auto.master`. In the line `/home auto.home`. Remove `--timeout 1200`, add `rsize=32768,wsize=32768,hard,intr`. Since IB traffic is used for NFS, here we set up very large rsize and wsize values.
 3. Reload config info (`service autofs reload`)
 4. You may want to tune LSI RAID card parameters as well to improve read/write performance. The following command ensures write-back, read-ahead, and use cache even if a bad battery is encountered (the latest generation of card no longer use battery though).
-    ```
+
+     ```
 /opt/MegaRAID/MegaCli/MegaCli64 -LDSetProp WB -LALL -aALL
 /opt/MegaRAID/MegaCli/MegaCli64 -LDSetProp CachedBadBBU -Lall -aAll
 /opt/MegaRAID/MegaCli/MegaCli64 -LDSetProp RA -LALL -aALL
