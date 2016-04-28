@@ -118,23 +118,10 @@ There are no real performance differences when increasing the size to rsize=1048
 
 (3) IO scheduler: No realistic differences in terms of performance, so cfq (completely fair queue) as default would be fine.
 
-### NFS performance in biocluster
-
-Using the benchmarking tool IOZone, I found that the I/O write is faster than read. This is likely due to the write-back caching of LSI RAID cards.
-
-```
-[kaiwang@biocluster ~]$ iozone -l 5 -u 5 -r 16k -s 60g -F exfile1 exfile2 exfile3 exfile4 exfile5 -i 0 -i 1 -c
--R: geneate Excel report; -a: full automatic mode; -g: set max file size for auto mode; -i: write test/read test selection; -b: binary file name; -c: use close() in timing calculation
-
-        Children see throughput for  5 initial writers  =  993666.23 KB/sec
-        Children see throughput for  5 rewriters        = 1012060.58 KB/sec
-        Children see throughput for  5 readers          =  556454.10 KB/sec
-        Children see throughput for 5 re-readers        =  618451.55 KB/sec
-```
-
 
 
 ## Monitor file system IO
+
 We created a cron process with “*/15 * * * * ssh nas-0-0 ./iomonitor.script”, which contains
 ```
 [user@biocluster ~]$ cat iomonitor.script
@@ -142,7 +129,23 @@ We created a cron process with “*/15 * * * * ssh nas-0-0 ./iomonitor.script”
 date >> iostat
 iostat -d -x >> iostat
 ```
-I think “iostat -n -m -x” would be more informative. But it shows that “dm-0” can utilize as high as 57% CPU when he runs MAKER, so the file system load can be really high and is probably why it is unstable.
+It shows that “dm-0” can utilize as high as 57% CPU when running some disk-heavy programs, so the file system load can be really high and is probably why it is unstable.
+
+I think “iostat -n -m -x” may be more informative. 
+
+```
+[root@nas-0-0 ~]# iostat -n -m -x
+Linux 2.6.32-504.16.2.el6.x86_64 (nas-0-0.local)        04/28/2016      _x86_64_        (16 CPU)
+
+Device:         rrqm/s   wrqm/s     r/s     w/s    rMB/s    wMB/s avgrq-sz avgqu-sz   await  svctm  %util
+sdb               0.50     3.20  174.83  118.76    19.89    31.42   357.93     2.06    7.01   0.26   7.73
+sda              18.60   439.56    1.78   16.14     0.09     1.78   213.54     0.06    3.18   0.34   0.60
+sdd               0.00     0.00    0.00    0.00     0.00     0.00     8.73     0.00    5.69   5.69   0.00
+sdc               0.00     0.00    0.00    0.77     0.00     0.02    62.48     0.00    0.47   0.42   0.03
+dm-0              0.00     0.00  175.33  122.73    19.89    31.45   352.72     2.08    6.96   0.26   7.75
+
+Filesystem:               rMB_nor/s    wMB_nor/s    rMB_dir/s    wMB_dir/s    rMB_svr/s    wMB_svr/s     ops/s    rops/s    wops/s
+```
 
 ## Fix autofs issues
 
