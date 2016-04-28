@@ -395,6 +395,7 @@ checking for host biocluster
 
 We delete the A40-WWW-PUPBLIC-LAN and create a new A40-WWW-PUBLIC-NEW rule above, which allows web traffic from any source to flow in and out of the frontend. By default, we only allow those local subnet (within the same netmask) to access the frontend.
 
+You can now go to web browser and visit the cluster's webpage. The home page is a wordpress page, which includes links to Ganglia cluster status report.
 
 
 ## Configure a host as job submission host
