@@ -86,6 +86,13 @@ hwclock --systohc --localtime
 
 Now the hardware clock is re-adjusted to the system time and both now point to the local time (which was synchronized to NTP server).
 
+Sometimes you may want to change time zone, such as from EDT to PDT. In this case, edit /etc/sysconfig/clock , and change `ZONE="America/New_York"` to `ZONE="America/Los_Angeles"`. Then do `cd /etc; rm localtime; ln -s /usr/share/zoneinfo/US/Pacific localtime`. Then `date` will show the correct time. For compute nodes, the following command listed their timezone:
+
+```
+[root@biocluster etc]# rocks list attr | fgrep zone
+Kickstart_Timezone:                America/Los_Angeles        
+```
+
 ## Change limit on the number of open files
 
 By default, Linux has a limit of 1024 files that can be opened simultaneously. For bioinformatics applications, this is way too small. A simple variant calling (such as by GATK) or a simple allele frequency calculation (such as by PennCNV) can easily exceed this limit and result in mysterious failure of the software tools.
