@@ -57,7 +57,19 @@ this should set the MTU for all hosts in the system to 65520
 
 ### Check IB status
 
-The `iblinkinfo` is perhaps the most commonly used command to check IB status. It tells you which host is actively connected and what is the speed of connection, and which host has trouble linking up.
+The `iblinkinfo` is perhaps the most commonly used command to check IB status. It tells you which host is actively connected and what is the speed of connection, and which host has trouble linking up. The `ibhosts` and `ibswitches` can be used to check hosts in the network.
+
+```
+[root@biocluster ~]# ibhosts 
+Ca      : 0x0002c903000cc172 ports 1 "nas-0-0 mlx4_0"
+Ca      : 0xf452140300ee07b0 ports 1 "compute-0-0 mlx4_0"
+Ca      : 0xf452140300ee0798 ports 1 "compute-0-1 mlx4_0"
+Ca      : 0xf452140300ee0814 ports 1 "compute-0-2 mlx4_0"
+Ca      : 0xf452140300ee082c ports 1 "compute-0-3 mlx4_0"
+Ca      : 0x0002c90300505e94 ports 1 "biocluster mlx4_0"
+[root@biocluster ~]# ibswitches 
+Switch  : 0x0002c90200422f90 ports 36 "Infiniscale-IV Mellanox Technologies" base port 0 lid 30 lmc 0
+```
 
 ### Measure network bandwidth and latency
 
