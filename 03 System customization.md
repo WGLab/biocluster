@@ -415,6 +415,19 @@ rocks set host attr compute-0-0 submit_host true
 
 Then reinstall compute-0-0.
 
+## Configure storage node
+
+This requires changing a few autofs configuration files, so that `home`, `apps`, `datasets` and so on are automatically mounted to nas-0-0, rather than the directory in `/export` in head node. For example, for `apps`, just edit `/etc/auto.share` to be
+
+```
+apps nas-0-0-ib.ipoib:/export/&
+datasets        nas-0-0-ib.ipoib:/export/&
+```
+
+For `home` directory, it is a little more complicated, and I will describe the treatment in the following User Management article.
+
+
+
 
 
 
