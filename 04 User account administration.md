@@ -60,7 +60,7 @@ Note that the `-r` will delete this user cleanly; otherwise mailbox and other th
 
 `usermod -g wanglab kaiwang5`
  
-- change user home directory to group home
+- change user home directory to group home (after changing user's group, we need to change the files to this group)
 
 `chgrp -c -R wanglab /home/kaiwang5`
 
@@ -70,7 +70,15 @@ Note that the `-r` will delete this user cleanly; otherwise mailbox and other th
 usermod -L -e 1 guest
 ```
 
-The `-L` option lock user's password by putting a ! in from of the the encrypted password. To disable user account set expire date to 1.
+The `-L` option lock user's password by putting a ! in from of the the encrypted password. (The `passwd -l guest` can do similar thing). To disable user account set expire date to 1.
+
+Note that locking password per se will not prevent a user from logging in from ssh key authentification. So setting expiration date is important.
+
+```
+chage -E 0 guest
+```
+
+will do a full account locking for guest.
 
 Use chage command to see current status of the user account: `chage -l guest`
 
