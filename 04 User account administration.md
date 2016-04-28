@@ -6,7 +6,18 @@ Rocks is basically a set of Python programs that controlls and facilitates clust
 
 For the setup of my cluster, the only place that I need to change Rocks source code is for user account administration. The reason is that I wanted to use a common storage server called `nas-0-0`, rather than head node, to store all user files, yet Rocks does not have an easy way to do this, unless I change source code. Fortunately, it is written in Python, so changing them is straightforward.
 
+Preparation: In nas-0-0, add `/dev/mapper/nas--0--0-export    /export         xfs     defaults        0 0` to the `/etc/fstab` file. Then mount the directory `mount /export`. Edit `/etc/export`, and add these two lines:
+
+```
+/export 10.1.0.0/255.255.0.0(rw,no_root_squash,async)
+/export 192.168.0.0/255.255.0.0(rw,no_root_squash,async)
+```
+
+Then execute `exportfs -r` (or use -a) to make it effective immediately. Then create `/export/home` directory in nas-0-0. We can now set up the user home directory below.
+
 First, do `rocks set attr Info_HomeDirSrv nas-0-0-ib.ipoib` to set up the server address for home directory. Then in `/opt/rocks/lib/python2.6/site-packages/rocks/commands/sync/users/plugin_fixnewusers.py`, just change value of “default_dir” from "/export/home/" to “/mnt/nas-0-0/home” (but make sure to first create this directory in head node). Next, change `/etc/default/useradd`, and use `HOME=/mnt/nas-0-0/home`. Finally, edit `/etc/auto.nas` and add `home    nas-0-0-ib.ipoib:/export/home` into the file, and edit `/etc/auto.master` and add `/mnt/nas-0-0    /etc/auto.nas   --timeout=1200` into the file. These are the necessary changes to set up user home directory correctly.
+
+Note that by default, the "/export/home" was used in useradd, but we cannot do automount for "/export" as the directory contains several sub-directories including home. So we have to use a new directory called /mnt/nas-0-0/home to do this. So modifying the source code is required to make this work.
 
 Under the scene, this is what happened when I add a new user called `kaiwang5`:
 
@@ -19,9 +30,9 @@ Under the scene, this is what happened when I add a new user called `kaiwang5`:
 ## Standard procedure for adding a new user
 
 1. login by “su -”
-2. useradd -c “Kai Wang” -g “col” kaiwang
-3. rocks sync users
-4. passwd kaiwang
+2. useradd -c “Kai Wang” -g wanglab kaiwang
+3. passwd kaiwang
+4. rocks sync users
 5. log in, make sure that everything is fine
 
 the current gid and uid information for all users can be accessed in the `/etc/passwd` file.
