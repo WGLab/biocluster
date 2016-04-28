@@ -107,7 +107,7 @@ Network security is very important, even if it is an academic research computing
 ### DenyHosts to prevent unauthorized brute force attack
 
 ```
-yum install denyhosts
+yum --enablerepo=epel install denyhosts
 service denyhosts restart
 chkconfig denyhosts on
 ```
