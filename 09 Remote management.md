@@ -47,6 +47,14 @@ To access the KVM in a compute node (for example, compute-0-0) in the cluster, I
 
 > To solve this problem, I need to download Java 1.8 (64bit binary) and install in local directory by unpacking it. (When I am writing this article, Java 1.8 is not available in Rocks yet). Then run the "jcontrol" program and add "https://compute-0-0-ipmi" into the exception list for security settings (since the java program from the IPMI is self-signed). Then do the same thing above, but navigate to the new Java and use the javaws to open this jnlp file. Then everything works just fine.
 
+## Ganglia monitoring of cluster health
+
+By default, Ganglia is included in Rocks, and if you open the public web access to the head node, you can use a web browser to check the status of the cluster.
+
+Ganglia is composed of two parts: Ganglia Monitoring Daemon (gmond) that is installed on every machine you’d like to monitor, and the Ganglia Meta Daemon (gmetad) that collects data from other gmetad and gmond sources and stores their state to disk in indexed round-robin databases.
+
+If you see weird things in Ganglia web page (like missing a machine or having extra machines), what you can do is to restart the gmond service in every machine and restart gmetad.
+
 ## Fixing compatibility problem for IPMI in Rocks
 
 For some reason, in some versions of Rocks that I encountered, once a node is turned off, it cannot be turned on again, and the Rocks system freezes at “Starting IPMI” stage when starting up.
