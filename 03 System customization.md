@@ -404,6 +404,19 @@ We delete the A40-WWW-PUPBLIC-LAN and create a new A40-WWW-PUBLIC-NEW rule above
 
 You can now go to web browser and visit the cluster's webpage. The home page is a wordpress page, which includes links to Ganglia cluster status report.
 
+## Configure message of the day (motd)
+
+Add the following to `/etc/motd`:
+
+```
+          _______________________________________
+ ________|                                       |_________
+\        |        biocluster.xxx.yyy.zzz         |        /
+ \       |                                       |       /
+  \      |       "Bioinformatics Clusterr"       |      /
+  /      |_______________________________________|      \
+ /___________)                               (___________\
+```
 
 ## Configure a host as job submission host
 
@@ -425,7 +438,6 @@ datasets        nas-0-0-ib.ipoib:/export/&
 ```
 
 For `home` directory, it is a little more complicated, and I will describe the treatment in the following User Management article.
-
 
 
 
