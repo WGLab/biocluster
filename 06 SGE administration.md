@@ -77,8 +77,8 @@ h_vmem              h_vmem     MEMORY      <=    YES         YES        4G      
 ```
 So that h_vmem is consumable with default value of 4G.
 
-Now run the example command below to confirm:
-`~kaiwang/usr/kaibin/bin/repeat_jobs.pl 1-20 'echo "sleep 120" | qsub -cwd -V -l hostname=compute-0-0' -r`
+Now run the example command below 20 times to confirm:
+`'echo "sleep 120" | qsub -cwd -V -l hostname=compute-0-0`
 If default is 4G, and if the resource is 48G at compute-0-0, then only 12 jobs can be run, and 8 jobs will be put into waiting list.
 
 ## Configuration of parallel environment
