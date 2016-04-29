@@ -226,6 +226,23 @@ Sometimes you will see that a job is at "Eqw" state in qstat. This is due to err
 
 Use `qlater -p <priority> <jobid>` to change the priority of a job. The valid range is -1024 to 1023. Lower number means lower priority. Regular users can only lower the priority. This applies only to queued jobs, not running jobs.
 
+## Adding a new queue
+
+We want to add a new queue using all.q as the template:
+
+```
+[root@biocluster ~]# qconf -sq all.q > bigmem.q
+```
+Then edit the bigmem.q file, then
+```
+[root@biocluster ~]# qconf -Aq bigmem.q 
+```
+to add this queue.
+
+To add hosts to this queue, first use `# rocks set host attr tile-0-0 exec_host true` to specify that this is an execution host, and then reinstall this host. Then you can directly edit it `qconf -mq bigmem` and change the `host` and `slots` parameter there.
+
+
+
 
 
 
