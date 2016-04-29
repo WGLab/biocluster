@@ -439,6 +439,12 @@ datasets        nas-0-0-ib.ipoib:/export/&
 
 For `home` directory, it is a little more complicated, and I will describe the treatment in the following User Management article.
 
+## Configure SGE
+
+This topic will be discussed in detail in later articles. However, here I give some recommendations on how to perform an initial set up of SGE. I suggest to use `qconf -mc` and change h_vmem to be consumable with default value of 4G (or another value that you want). Then use `qconf -me <HOSTNAME>` to change the complex_value for each host. This ensures smooth execution of jobs and ensures stability of the cluster when multiple users are present and some of them are running weird jobs that may crash nodes.
+
+
+
 
 
 
