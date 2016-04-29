@@ -343,6 +343,13 @@ private eth0  00:25:90:85:d1:50                                           10.1.2
 [root@biocluster ~]# rocks sync host network nas-0-0   
 ```
 
+Some people say that firewall should be additionally opened for inter-node IB communications. I was not exactly sure how necessary it is and what role it plays, but here is the command (for head node).
+```
+# Firewall
+rocks add firewall host=localhost chain=INPUT protocol=all service=all action=ACCEPT network=ipoib iface=ib0 rulename="A80-IB0-PRIVATE"
+rocks sync host firewall localhost
+```
+
 ## Enable web access to frontend
 
 The general procedure is described [here](http://central6.rocksclusters.org/roll-documentation/base/6.1.1/enable-www.html). Briefly, 
