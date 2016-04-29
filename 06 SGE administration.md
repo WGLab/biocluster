@@ -239,7 +239,9 @@ Then edit the bigmem.q file, then
 ```
 to add this queue.
 
-To add hosts to this queue, first use `# rocks set host attr tile-0-0 exec_host true` to specify that this is an execution host, and then reinstall this host. Then you can directly edit it `qconf -mq bigmem` and change the `host` and `slots` parameter there.
+Later you can directly edit it `qconf -mq bigmem` and change the `host` and `slots` parameter there.
+
+For example, to switch a host from the all.q to bigmem, we can do this: (1) first `qconf -mhgrp @allhosts` to remove it, then `qconf -ahgrp @bigmemhosts` to add it. Then add this hostgroup to the bigmem queue.
 
 ## Change appliance type
 
