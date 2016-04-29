@@ -241,6 +241,31 @@ to add this queue.
 
 To add hosts to this queue, first use `# rocks set host attr tile-0-0 exec_host true` to specify that this is an execution host, and then reinstall this host. Then you can directly edit it `qconf -mq bigmem` and change the `host` and `slots` parameter there.
 
+## Change appliance type
+
+Some times you may want to chagne a NAS to a job execution host. This can be done by changing appliance type.
+
+```
+[root@biocluster ~]# rocks list membership
+MEMBERSHIP               APPLIANCE    DISTRIBUTION PUBLIC
+Frontend:                frontend     rocks-dist   no    
+Compute:                 compute      rocks-dist   yes   
+NAS Appliance:           nas          rocks-dist   yes   
+Ethernet Switch:         network      rocks-dist   yes   
+Power Distribution Unit: power        rocks-dist   yes   
+Development Appliance:   devel-server rocks-dist   yes   
+Login:                   login        rocks-dist   yes   
+```
+
+shows all appliance types.
+
+```
+[root@biocluster ~]# rocks set host membership dragon membership="Compute"
+```
+
+change the appliance type. Then re-install the node, and it will show up in `qhost`.
+
+
 
 
 
