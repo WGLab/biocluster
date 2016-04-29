@@ -243,6 +243,15 @@ Later you can directly edit it `qconf -mq bigmem` and change the `host` and `slo
 
 For example, to switch a host from the all.q to bigmem, we can do this: (1) first `qconf -mhgrp @allhosts` to remove it, then `qconf -ahgrp @bigmemhosts` to add it. Then add this hostgroup to the bigmem queue.
 
+## default submission parameters
+
+If you have multiple queues, it makes sense to set up a default queue, since SGE rand
+
+Edit the `/opt/gridengine/default/common/sge_request` file, add `-q all.q` as the default queue.
+
+From user's perspective, they can also use a default SGE specification file .sge_request in their home directory. If they do not specify the parameters in command line, these defaults from the file will be used.
+
+
 ## Change appliance type
 
 Some times you may want to chagne a NAS to a job execution host. This can be done by changing appliance type.
