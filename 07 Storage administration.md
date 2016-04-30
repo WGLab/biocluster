@@ -282,49 +282,9 @@ tmpfs                  64G     0   64G   0% /dev/shm
 
 ## Extending the XFS volume by additional JBOD
 
-Suppose that in the future, you want to add additional JBOD to the system, yet extending the size of the `/export` directory. This can be accomplished by the following procedure: First, create two drive groups in LSI WEBBIOS, and the system will treat them as `/dev/sdd` and `/dev/sde`, respectively. Now go to Linux, type `parted /dev/sdd`, then `mklabel gpt`, then `mkpart primary 0% 100%`, then “quit”. Then `mkfs.xfs /dev/sdd1` (this step is most likely not needed). Do the same for `/dev/sde1`. Now `pvcreate /dev/sdd1` and `pvcreate /dev/sde1`. Use “pvscan” to confirm two physical volumes created. use “vgdisplay” to confirm FREE PE=0. Then `vgextend nas-0-1 /dev/sdd1` and `vgextend nas-0-1 /dev/sde1`, then “vgdisplay” again. Check the FREE size. Now `lvextend -L +100%FREE /dev/nas-0-1/export`, type “df -h” to check size. Then `xfs_growfs /dev/nas-0-1/export`, and type `df -h` again to check if the size has changed to the correct size. 
+Suppose that in the future, you want to add additional JBOD to the system, yet extending the size of the `/export` directory. This can be accomplished by the following procedure: First, create new drive groups in WEBBIOS or configuration utility, and suppose the system will treat them as `/dev/sdd` and `/dev/sde`, respectively. Now go to Linux, type `parted /dev/sdd`, then `mklabel gpt`, then `mkpart primary 0% 100%`, then “quit”. Then `mkfs.xfs /dev/sdd1` (this step is most likely not needed). Do the same for `/dev/sde1`. Now `pvcreate /dev/sdd1` and `pvcreate /dev/sde1`. Use “pvscan” to confirm two physical volumes created. use “vgdisplay” to confirm FREE PE=0. Then `vgextend nas-0-1 /dev/sdd1` and `vgextend nas-0-1 /dev/sde1`, then “vgdisplay” again. Check the FREE size. Now `lvextend -L +100%FREE /dev/nas-0-1/export`, type “df -h” to check size. Then `xfs_growfs /dev/nas-0-1/export`, and type `df -h` again to check if the size has changed to the correct size. 
 
 
-## XFS volume repair
-
-When the system shows IO error, one cannot read/write from the /export directory any more. Umounting and re-mounting shows "mount: strcuture needs cleaning" message. Restarting the computer did not help either. Therefore, we attempated xfs_repair to fix this problem.
-
-```
-[root@nas-0-1 ~]# xfs_repair /dev/mapper/nas--0--1-export
-Phase 1 - find and verify superblock...
-Phase 2 - using internal log
-        - zero log...
-ERROR: The filesystem has valuable metadata changes in a log which needs to
-be replayed.  Mount the filesystem to replay the log, and unmount it before
-re-running xfs_repair.  If you are unable to mount the filesystem, then use
-the -L option to destroy the log and attempt a repair.
-Note that destroying the log may cause corruption -- please attempt a mount
-of the filesystem before doing this.
-[root@nas-0-1 ~]# mount /export/
-mount: Structure needs cleaning
-[root@nas-0-1 ~]# umount /export 
-mount: Structure needs cleaning
-[root@nas-0-1 ~]# xfs_repair -L /dev/mapper/nas--0--1-export
-Phase 1 - find and verify superblock...
-Phase 2 - using internal log
-        - zero log...
-ALERT: The filesystem has valuable metadata changes in a log which is being
-destroyed because the -L option was used.
-        - scan filesystem freespace and inode maps...
-agi unlinked bucket 6 is 26403654 in ag 0 (inode=26403654)
-sb_icount 17162816, counted 34859264
-sb_ifree 125, counted 1683
-sb_fdblocks 69126412932, counted 60959141713
-        - found root inode chunk
-Phase 3 - for each AG...
-        - scan and clear agi unlinked lists...
-        - process known inodes and perform inode discovery...
-        - agno = 0
-data fork in ino 2425892 claims free block 6063805942
-data fork in ino 2425892 claims free block 6063805943
-```
-
-The XFS FAQ provides excellent guide: http://xfs.org/index.php/XFS_FAQ
 
 ## Clear RAID information from hard drive
 
@@ -418,6 +378,85 @@ Next go to a compute node and cd to `/share/datasets` and test the NFS performan
 "           Read "  491567.32 
 "        Re-read "  495062.38 
 ```
+
+# The scariest thing: handling unexpected emergencies
+
+The scariest thing that we may encounter is complete file system loss (as opposed to losing one or two drives in a drive group, which can be rebuilt by RAID arrays). I have encountered a lot of these types of scenarios, and below I describe general strategies to handle them.
+
+## XFS volume repair
+
+This usually happens when there is unclean mount/unmount, but it may also happen when you are using the system. For example, when the system shows IO error, one cannot read/write from the /export directory any more. Umounting and re-mounting shows "mount: strcuture needs cleaning" message. Restarting the computer did not help either. Now, we can use xfs_repair to fix this problem. The command replays the journal log to fix any inconsistencies that might have resulted from the file system not being cleanly unmounted. 
+
+If the journal log itself has become corrupted, you can reset the log by specifying the -L option to xfs_repair. However, this may result in some data loss, so be careful with it.
+
+If you just want to check the file system status, xfs_check can be used instead. In any case, you must unmount the file system first, before using these commands.
+
+```
+[root@nas-0-1 ~]# xfs_repair /dev/mapper/nas--0--1-export
+Phase 1 - find and verify superblock...
+Phase 2 - using internal log
+        - zero log...
+ERROR: The filesystem has valuable metadata changes in a log which needs to
+be replayed.  Mount the filesystem to replay the log, and unmount it before
+re-running xfs_repair.  If you are unable to mount the filesystem, then use
+the -L option to destroy the log and attempt a repair.
+Note that destroying the log may cause corruption -- please attempt a mount
+of the filesystem before doing this.
+[root@nas-0-1 ~]# mount /export/
+mount: Structure needs cleaning
+[root@nas-0-1 ~]# umount /export 
+mount: Structure needs cleaning
+[root@nas-0-1 ~]# xfs_repair -L /dev/mapper/nas--0--1-export
+Phase 1 - find and verify superblock...
+Phase 2 - using internal log
+        - zero log...
+ALERT: The filesystem has valuable metadata changes in a log which is being
+destroyed because the -L option was used.
+        - scan filesystem freespace and inode maps...
+agi unlinked bucket 6 is 26403654 in ag 0 (inode=26403654)
+sb_icount 17162816, counted 34859264
+sb_ifree 125, counted 1683
+sb_fdblocks 69126412932, counted 60959141713
+        - found root inode chunk
+Phase 3 - for each AG...
+        - scan and clear agi unlinked lists...
+        - process known inodes and perform inode discovery...
+        - agno = 0
+data fork in ino 2425892 claims free block 6063805942
+data fork in ino 2425892 claims free block 6063805943
+```
+
+The XFS FAQ provides excellent guide: http://xfs.org/index.php/XFS_FAQ
+
+## LSI self-check does not pass
+
+When you are starting up the storage server, the LSI/AVAGO BIOS will show something like 'F/W initializing devices x%', where the x changes from 0 to 100. It may take a few seconds or a minute. Additional information, such as the battery status, the PCI slot number, and the physical drives, will be shown.
+
+Sometimes the screen freezes at some point, such as the 'F/W initializing step' and cannot continue. If you encounter this, try to power cycle the whole system (unplugging power and wait 30 seconds). Try this a few times, and perhaps it will work the second or third time that you try this.
+
+Then you should perhaps consider replacing the RAID card since it is likely defective or at least unstable. Buy a new card. Then just replace the old card by the new card, plug the cable, then everything should just work immediately. The reason is that RAID configurations are stored in each hard drive, so that a new card can still read and import these configurations and start working immediately after the replacement.
+
+
+## Foreign configuration found
+
+Sometimes when you start up the storage server, the LSI/AVAGO BIOS will show a message about 'foreign configuration found', and ask you what to do. You did not change anything in the system, why does this message show up? It could be due to a variety of reasons, say for example, one hard drive suddently becomes bad and is dropped from the RAID array, and LSI raid immediately detects so it starts rebuilding using a hot spare (so the configuration changed automatically). Now this hard drive recovered and becomes live again, the configuration on it is now "foreign" as it does not belong to the current array. In this case, you can probably just configure it as a hot spare without importing foreign configuration, while at the same time buy another drive to replace it soon since it becomes unstable.
+
+## Entire virtual drive or drive group is gone!
+
+This may occur for all drives in a drive group, say for example, you connect JBOD to a storage server but somehow the power for JBOD gets disconnected for a second. Now the system will show I/O error as the JBOD is not synchronized with the main storage server.
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
