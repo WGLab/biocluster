@@ -443,7 +443,9 @@ Sometimes when you start up the storage server, the LSI/AVAGO BIOS will show a m
 
 ## Entire virtual drive or drive group is gone!
 
-This may occur for all drives in a drive group, say for example, you connect JBOD to a storage server but somehow the power for JBOD gets disconnected for a second. Now the system will show I/O error as the JBOD is not synchronized with the main storage server.
+This may occur for all drives in a drive group, say for example, you connect JBOD to a storage server but somehow the power for JBOD gets disconnected for a second. Now the system will show I/O error as the JBOD is not synchronized with the main storage server. If you restart the storage server, the volume can no longer be mounted, and in fact the LSI BIOS will show error such as '3 virtual drives found on the host adapter, 1 virtual drive offline'. Do not panic, there are ways to address that.
+
+First make sure whether there are problems with the physical cable or the SAS expander. You can just count the number of drives found by the RAID card, and see whether all drives are indeed found by the card. If so, then it is probably just a configuration problem to recover the lost virtual drive.
 
 
 
