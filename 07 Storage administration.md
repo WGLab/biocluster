@@ -447,7 +447,9 @@ This may occur for all drives in a drive group, say for example, you connect JBO
 
 First make sure whether there are problems with the physical cable or the SAS expander. You can just count the number of drives found by the RAID card, and see whether all drives are indeed found by the card. If so, then it is probably just a configuration problem to recover the lost virtual drive.
 
+Go to LSI/AVAGO BIOS, then check what is wrong with the drives in the virtual drive. It is likely that they are all marked as 'frn-bad' (foreign bad) or 'unconfigured bad'. For each of the drive, manually change them to 'good'. Once all the changes are done, scan the adapter again, and if it ask whether to import foreign configuration (remember that once some drives are out of the array even just for one second, they are considered foreign and their membership gets lost in the array), say yes. Then the old virtual drive will show up now, and the system should have returned normal.
 
+Make sure to do a `xfs_check` to see whether there is anything wrong with the system, and if so, repair it.
 
 
 
