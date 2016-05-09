@@ -63,7 +63,7 @@ ImportError: /lib64/libc.so.6: version `GLIBC_2.15' not found (required by /home
 
 There are two potential solutions. One is to rebuild tensorflow. However, tensorflow uses the Bazel builder developed by Google, which in turn requires Java 8 and high versions of GCC, which the system does not have. The other solution is to rebuild GLIBC and GCC.
 
-Next we rebuild glibc (for C library) and gcc (for C++ library) from scratch. However, after I install glibc2.15, tensorflow begins to complain "version `GLIBC_2.17` not found". So it seems that the minimal version of glibc should have been 2.17.
+Next we rebuild glibc (for C library) and gcc (for C++ library) from scratch. However, after I install glibc2.15, tensorflow begins to complain "version `GLIBC_2.17` not found". So it seems that the minimal version of glibc should have been 2.17 for tensorflow to work.
 
 ```
 wget http://ftp.gnu.org/gnu/glibc/glibc-2.17.0.tar.gz
