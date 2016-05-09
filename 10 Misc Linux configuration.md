@@ -29,7 +29,7 @@ For machines equipped with NVIDIA GPU, you may want to install CUDA for GPU comp
 [root@phoenix ~]# yum install cuda
 ```
 
-- download cudaCNN (registartion required)
+- download cudaCNN from https://developer.nvidia.com/cudnn (registartion required)
 ```
 [root@phoenix ~]# tar xvfz cudnn-7.0-linux-x64-v4.0-prod.tgz 
 [root@phoenix ~]# cp cuda/include/cudnn.h /usr/local/cuda/include/
