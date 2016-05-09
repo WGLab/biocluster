@@ -6,7 +6,7 @@ There are also many miscellaneous Linux configuration tasks that applies to any 
 
 For machines equipped with NVIDIA GPU, you may want to install CUDA for GPU computing. Below is a general procedure to do that in a Rocks 6.2 system (with Centos 6).
 
-#install freeglut
+-install freeglut
 [root@phoenix ~]# yum --enablerepo epel install libGL-devel
 [root@phoenix ~]# yum --enablerepo epel install libGLU-devel
 [root@phoenix ~]# wget ftp://rpmfind.net/linux/centos/6.7/os/x86_64/Packages/freeglut-2.6.0-1.el6.x86_64.rpm
@@ -14,17 +14,17 @@ For machines equipped with NVIDIA GPU, you may want to install CUDA for GPU comp
 [root@phoenix ~]# rpm -ivh freeglut-2.6.0-1.el6.x86_64.rpm 
 [root@phoenix ~]# rpm -ivh freeglut-devel-2.6.0-1.el6.x86_64.rpm 
 
-#install prerequisite for CUDA
+-install prerequisite for CUDA
 [root@phoenix ~]# yum --enablerepo epel install libvdpau
 [root@phoenix ~]# yum --enablerepo epel install dkms
 
-#download CUDA from https://developer.nvidia.com/cuda-downloads
+-download CUDA from https://developer.nvidia.com/cuda-downloads
 [root@phoenix ~]# rpm -i cuda-repo-rhel6-7-5-local-7.5-18.x86_64.rpm
 [root@phoenix ~]# yum clean all
 [root@phoenix ~]# yum install cuda
 
 
-#download cudaCNN (registartion required)
+-download cudaCNN (registartion required)
 [root@phoenix ~]# tar xvfz cudnn-7.0-linux-x64-v4.0-prod.tgz 
 [root@phoenix ~]# cp cuda/include/cudnn.h /usr/local/cuda/include/
 [root@phoenix ~]# cp cuda/lib64/libcudnn* /usr/local/cuda/lib64/
