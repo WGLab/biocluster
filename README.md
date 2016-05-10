@@ -25,7 +25,7 @@ This tutorial is organized into several main sections:
 
 If you have suggestions, comments or additions, please fork the repository, modify it and submit a pull request.
 
-If you like this repository, please click on the "Star" button on top of this page, to show appreciation to the repository maintainer. If you want to receive notifications on changes to this repository, please click the "Watch" button on top of this page.
+If you like this repository, please click on the "Star" button on top of this page, to show your appreciation and **it really means a lot to me**. If you want to receive notifications on changes to this repository, please click the "Watch" button on top of this page.
 
 ## License
 
