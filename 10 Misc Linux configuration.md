@@ -39,7 +39,7 @@ For machines equipped with NVIDIA GPU, you may want to install CUDA for GPU comp
 
 ## install tensorflow
 
-default isntruction does not work since Centos 6 does not support glibc2.15, which is required by tensorflow. (glibc2.15 is only supported in Centos 7). See below for the typical error message.
+Tensorflow is useful for deep learning, and in our experience, the user interface and usability is far better than Torch or Theano. The default instruction does not work since Centos 6 does not support glibc2.15, which is required by tensorflow. (glibc2.15 rpm is only available in Centos 7). See below for the typical error message.
 
 ```
 [kaiwang@phoenix ~]$ python
@@ -63,7 +63,7 @@ ImportError: /lib64/libc.so.6: version `GLIBC_2.15' not found (required by /home
 
 There are two potential solutions. One is to rebuild tensorflow. However, tensorflow uses the Bazel builder developed by Google, which in turn requires Java 8 and high versions of GCC, which the system does not have. The other solution is to rebuild GLIBC and GCC.
 
-Next we rebuild glibc (for C library) and gcc (for C++ library) from scratch. However, after I install glibc2.15, tensorflow begins to complain "version `GLIBC_2.17` not found". So it seems that the minimal version of glibc should have been 2.17 for tensorflow to work.
+So to address this, we should rebuild glibc (for C library) and gcc (for C++ library) from scratch. However, after I install glibc2.15, tensorflow begins to complain "version `GLIBC_2.17` not found". So it seems that the minimal version of glibc should have been 2.17 for tensorflow to work.
 
 ```
 wget http://ftp.gnu.org/gnu/glibc/glibc-2.17.0.tar.gz
