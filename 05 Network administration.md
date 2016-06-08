@@ -244,3 +244,45 @@ to blink the eth0 port, to help identify which port is eth0. This is important, 
 ### list of all hosts in local network
 
 Use the `nmap -sP 192.168.1.*` command, which basically ping all hosts.
+
+## Troubleshooting
+
+### Only getting 100Mb/s speed for gigabit connection
+
+You can check the current speed by the `ethtool eth0` command, such as below:
+
+```
+[root@biocluster /]$ ethtool eth0
+Settings for eth0:
+        Supported ports: [ TP ]
+        Supported link modes:   10baseT/Half 10baseT/Full 
+                                100baseT/Half 100baseT/Full 
+                                1000baseT/Full 
+        Supported pause frame use: Symmetric
+        Supports auto-negotiation: Yes
+        Advertised link modes:  10baseT/Half 10baseT/Full 
+                                100baseT/Half 100baseT/Full 
+                                1000baseT/Full 
+        Advertised pause frame use: Symmetric
+        Advertised auto-negotiation: Yes
+        Speed: 100Mb/s
+        Duplex: Full
+        Port: Twisted Pair
+        PHYAD: 1
+        Transceiver: internal
+        Auto-negotiation: on
+        MDI-X: off (auto)
+        Supports Wake-on: pumbg
+        Wake-on: g
+        Current message level: 0x00000007 (7)
+                               drv probe link
+        Link detected: yes
+```
+
+This is almost always caused by low-quality cable. Replace with a better CAT6 cable to solve the issue.
+
+## eth0 not found in system
+
+Depending on your motherboard, eth0/eth1 can be called em1/em2, for example in Dell C6100 servers.
+
+
