@@ -71,6 +71,8 @@ to `extend-compute.xml` and then reinstall the compute nodes. Then everything re
 
 This is no longer necessary as of Rocks 6.1.1, since OpenIPMI is installed in compute node by default.
 
+Later on I encountered the same problem in a Rocks 6.2 machine, where all three IPMI packages are installed. Essentially the machine hangs during loading the CentOS, and pressing "right/left" key can show the log message. It is possible that the machine langs because the IPMI interface was not connected to any network, but configured for DHCP. I have yet to check this possibility.
+
 ## Additional references
 
 I found a very well written reference on IPMI [here](http://wiki.adamsweet.org/doku.php?id=ipmi_on_linux). Some configuration options and usage examples [here](https://lonesysadmin.net/2007/06/21/how-to-configure-ipmi-on-a-dell-poweredge-running-red-hat-enterprise-linux/).
