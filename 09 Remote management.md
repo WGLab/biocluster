@@ -71,3 +71,6 @@ to `extend-compute.xml` and then reinstall the compute nodes. Then everything re
 
 This is no longer necessary as of Rocks 6.1.1, since OpenIPMI is installed in compute node by default.
 
+## Additional references
+
+I found a very well written reference on IPMI [here](http://wiki.adamsweet.org/doku.php?id=ipmi_on_linux).
