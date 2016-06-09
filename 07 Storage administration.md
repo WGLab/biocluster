@@ -451,6 +451,20 @@ Go to LSI/AVAGO BIOS, then check what is wrong with the drives in the virtual dr
 
 Make sure to do a `xfs_check` to see whether there is anything wrong with the system, and if so, repair it.
 
+## Some handy commands
+
+- `lsblk` can be used to check all block devices in a system quickly. You can do `fdisk -l` as well but the output is messy.
+
+```
+[root@phoenix ~]# lsblk 
+NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+sda      8:0    0 223.6G  0 disk 
+|-sda1   8:1    0 195.3G  0 part /
+`-sda2   8:2    0  28.3G  0 part [SWAP]
+sdb      8:16   0 223.6G  0 disk 
+`-sdb1   8:17   0 223.6G  0 part /state/partition1
+```
+
 
 
 
