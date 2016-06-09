@@ -73,4 +73,4 @@ This is no longer necessary as of Rocks 6.1.1, since OpenIPMI is installed in co
 
 ## Additional references
 
-I found a very well written reference on IPMI [here](http://wiki.adamsweet.org/doku.php?id=ipmi_on_linux).
+I found a very well written reference on IPMI [here](http://wiki.adamsweet.org/doku.php?id=ipmi_on_linux). Some configuration options and usage examples [here](https://lonesysadmin.net/2007/06/21/how-to-configure-ipmi-on-a-dell-poweredge-running-red-hat-enterprise-linux/).
