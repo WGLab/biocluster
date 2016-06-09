@@ -76,3 +76,5 @@ Later on I encountered the same problem in a Rocks 6.2 machine, where all three 
 ## Additional references
 
 I found a very well written reference on IPMI [here](http://wiki.adamsweet.org/doku.php?id=ipmi_on_linux). Some configuration options and usage examples [here](https://lonesysadmin.net/2007/06/21/how-to-configure-ipmi-on-a-dell-poweredge-running-red-hat-enterprise-linux/).
+
+The default username/password for Dell server IPMI are root/root. The default username/password for IBM server IPMI are USERID/PASSW0RD. The default username/password for supermicro server are ADMIN/ADMIN.
