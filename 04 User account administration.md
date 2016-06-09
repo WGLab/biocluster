@@ -82,7 +82,7 @@ will do a full account locking for guest.
 
 Use chage command to see current status of the user account: `chage -l guest`
 
-Use below to re-enable the user account: `chage -E -1 guest`
+Use this to re-enable the user account: `chage -E -1 guest`. Use this to unlock the user account: `usermod -U guest`.
 
 ### UID and GID
 
