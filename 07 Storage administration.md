@@ -428,6 +428,16 @@ data fork in ino 2425892 claims free block 6063805943
 
 The XFS FAQ provides excellent guide: http://xfs.org/index.php/XFS_FAQ
 
+When doing `xfs_repair`, sometimes you may find that you get stuck in phase 6:
+
+```
+Phase 6 - check inode connectivity...
+        - resetting contents of realtime bitmap and summary inodes
+        - traversing filesystem ...
+```
+
+This is usually caused by prefetching. Just add the `-P` argument to xfs_repair.
+
 ## LSI self-check does not pass
 
 When you are starting up the storage server, the LSI/AVAGO BIOS will show something like 'F/W initializing devices x%', where the x changes from 0 to 100. It may take a few seconds or a minute. Additional information, such as the battery status, the PCI slot number, and the physical drives, will be shown.
