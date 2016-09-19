@@ -233,13 +233,14 @@ We want to add a new queue using all.q as the template:
 ```
 [root@biocluster ~]# qconf -sq all.q > bigmem.q
 ```
-Then edit the bigmem.q file, then
+Then edit the bigmem.q file (change `qname` to `bigmem`, change `hostlist` to `@bigmemhosts`, change `slots` to something like `1,[dragon.local=32]` where dragon.local is a host in bigmemhosts), then
+
 ```
 [root@biocluster ~]# qconf -Aq bigmem.q 
 ```
 to add this queue.
 
-Later you can directly edit it `qconf -mq bigmem` and change the `host` and `slots` parameter there.
+Later you can directly edit it `qconf -mq bigmem` and further change the `hostlist` and `slots` parameter there.
 
 For example, to switch a host from the all.q to bigmem, we can do this: (1) first `qconf -mhgrp @allhosts` to remove it, then `qconf -ahgrp @bigmemhosts` to add it. Then add this hostgroup to the bigmem queue.
 
