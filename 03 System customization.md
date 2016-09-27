@@ -93,6 +93,26 @@ Sometimes you may want to change time zone, such as from EDT to PDT. In this cas
 Kickstart_Timezone:                America/Los_Angeles        
 ```
 
+## Chagne timezone for the entire cluster
+
+Technically you need to rebuild the whole cluster. However, as a lazy person, this is a workaround. First do this:
+
+```
+[root@biocluster /]$ rocks run host compute 'cd /etc; rm localtime; ln -s /usr/share/zoneinfo/America/New_York localtime'
+```
+
+Also make sure to do this for NAS devices, since they are not counted as compute. Also do this on head node of course.
+
+Next do this: 
+
+```
+rocks set attr attr=Kickstart_Timezone value=America/New_York
+```
+
+This ensures that current and future nodes will be updated to New York time.
+
+
+
 ## Change limit on the number of open files
 
 By default, Linux has a limit of 1024 files that can be opened simultaneously. For bioinformatics applications, this is way too small. A simple variant calling (such as by GATK) or a simple allele frequency calculation (such as by PennCNV) can easily exceed this limit and result in mysterious failure of the software tools.
