@@ -370,6 +370,12 @@ rocks add firewall host=localhost chain=INPUT protocol=all service=all action=AC
 rocks sync host firewall localhost
 ```
 
+If you have many nodes to set up, it is best to write a simple script to automate the tasks:
+
+```
+[root@biocluster /]$ perl -e 'for my $i(0..11){print "echo compute-0-$i\nrocks list host interface compute-0-$i\nrocks set host interface ip compute-0-$i iface=ib0 ip=192.168.255.${\(250-$i)}\nrocks set host interface subnet compute-0-$i iface=ib0 subnet=ipoib\nrocks set host interface name compute-0-$i iface=ib0 name=compute-0-$i-ib\nrocks sync host network compute-0-$i\n\n\n"}'
+```
+
 ## Enable web access to frontend
 
 The general procedure is described [here](http://central6.rocksclusters.org/roll-documentation/base/6.1.1/enable-www.html). Briefly, 
