@@ -476,8 +476,25 @@ For `home` directory, it is a little more complicated, and I will describe the t
 
 This topic will be discussed in detail in later articles. However, here I give some recommendations on how to perform an initial set up of SGE. I suggest to use `qconf -mc` and change h_vmem to be consumable with default value of 4G (or another value that you want). Then use `qconf -me <HOSTNAME>` to change the complex_value for each host. This ensures smooth execution of jobs and ensures stability of the cluster when multiple users are present and some of them are running weird jobs that may crash nodes.
 
+For example, when doing `qconf -me compute-0-24`, we can use this:
 
+```
+hostname              compute-0-24.local
+load_scaling          NONE
+complex_values        h_vmem=96G
+user_lists            NONE
+xuser_lists           NONE
+projects              NONE
+xprojects             NONE
+usage_scaling         NONE
+report_variables      NONE
+```
 
+When doing `qconf -mc`, we can use below for h_vmem, so that each node can handle 24 jobs by default.
+
+```
+h_vmem              h_vmem     MEMORY      <=    YES         YES        4G       0
+```
 
 
 
