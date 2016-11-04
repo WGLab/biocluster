@@ -2,6 +2,23 @@
 
 There are also many miscellaneous Linux configuration tasks that may not apply to most Rocks users. We will describe some of them here as reference.
 
+## hardware information
+
+When you get access to a new computer server, you may want to run some commands to figure out the hardware configurations. Below is a number of commands that you can use:
+
+- dmidecode ( lists hardware model, serial number, cpu, memory. This command was handy when i needed to find serial number without a visit to data center)
+- lshal (also list hardware model and so on)
+- lspci ( lists pci device)
+- lsusb ( lists usb device)
+- lsscsi ( lists scsi device)
+- systool
+- fdisk -l ( lists hard drive)
+- cat /proc/cpuinfo ( more on cpu)
+- cat /proc/meminfo ( more on memory)
+- dmesg | egrep ‘(SCSI|scsi0|ide0|hda|sda|serio|mice|eth0|eth1)’
+
+
+
 ## Install CUDA
 
 For machines equipped with NVIDIA GPU, you may want to install CUDA for GPU computing. Below is a general procedure to do that in a Rocks 6.2 system (with Centos 6).
