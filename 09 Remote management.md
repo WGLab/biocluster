@@ -31,6 +31,8 @@ In /etc/hosts.local file, make sure to add lines such as `10.1.1.11       comput
 
 Now from head node, you can run the same `ipmitool` commands to control or monitor each compute node. However, I recommend that you do NOT change the password of IPMI in compute node, since they are not connected to the Internet and there is no security risk. Even if you insist to change the password, you should use the identical password for all compute nodes, to faciliate system administration in the future.
 
+Sometimes the IPMI may crash and fail to respond (for example, you cannot ping the IP address), and you can use `ipmitool mc reset cold` to reset it.
+
 ## KVM access to head node over IPMI
 
 Almost all server manufacturers will allow remote KVM (keyboard-video-mouse) over IPMI to access to server, though some of them charges extra fees for using this feature. Basically, this feature allows you to run a Java program to use open a screen in your own computer that attach to KVM of the remote head node.
