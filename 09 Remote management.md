@@ -33,6 +33,20 @@ Now from head node, you can run the same `ipmitool` commands to control or monit
 
 Sometimes the IPMI may crash and fail to respond (for example, you cannot ping the IP address), and you can use `ipmitool mc reset cold` to reset it.
 
+Sometimes you may want to change IP address for IPMI on compute node in OS directly, rather than from the BIOS. This can be done using ipmitool. For example, to configure IPMI on compute-0-24, I login the node as root, then:
+
+```
+[root@compute-0-24 ~]# ipmitool lan set 1 ipsrc static
+[root@compute-0-24 ~]# ipmitool lan set 1 ipaddr 10.1.10.226
+Setting LAN IP Address to 10.1.10.226
+[root@compute-0-24 ~]# ipmitool lan set 1 netmask 255.255.0.0
+Setting LAN Subnet Mask to 255.255.0.0
+[root@compute-0-24 ~]# ipmitool lan set 1 defgw ipaddr 10.1.1.1
+Setting LAN Default Gateway IP to 10.1.1.1
+```
+
+Finally, use `ipmitool lan print 1` to check the new configurations.
+
 ## KVM access to head node over IPMI
 
 Almost all server manufacturers will allow remote KVM (keyboard-video-mouse) over IPMI to access to server, though some of them charges extra fees for using this feature. Basically, this feature allows you to run a Java program to use open a screen in your own computer that attach to KVM of the remote head node.
