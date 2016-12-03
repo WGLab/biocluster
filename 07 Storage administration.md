@@ -173,6 +173,8 @@ or
 ```
 if the former does not work.
 
+In one server, also found that when I install latest version (v15) of MSM, I cannot connect to remote servers ("megaraid storage manager servers could not be found because server may be down"), and other version such as v13 does not work either. In that case, I have to roll back to version 12 (10/8/2012), and then can use MSM correctly. This may be due to the firmware version of the LSI card.
+
 ## Creating a new XFS volume
 
 Once you set up RAID and created several hardware-level logical drives, next we should use LVM to create software-level physical and logical volumes. These are VERY DIFFERENT concepts!!! The drive group, logical drive and physical drive in RAID card setting are all hardware level concepts, and once they are completed, what's presented to the user are merely things like `/dev/sda`, `/dev/sdb`, `/dev/sdc` and so on. Next, we need to make software-level LVM to manage these drives and combine them together.
