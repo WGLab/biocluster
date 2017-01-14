@@ -162,7 +162,33 @@ cp /opt/gcc-4.9.3/lib64/libstdc++.so.6 /usr/lib64/libstdc++.so.6
 cp /opt/gcc-4.9.3/lib64/libstdc++.so.6.0.20 /usr/lib64/libstdc++.so.6.0.20
 ```
 
-The make process itself should take 60-120 minutes depending on your computer's configuration. It will be an extremely boring period of time. Make sure you do not lose internet connection otherwise you'll have to start over again.
+The make process itself should take 60-120 minutes depending on your computer's configuration. It will be an extremely boring period of time; but it is also a good time for you to take a rest, look at the computer screen and start thinking about the true meaning of life. Make sure you do not lose internet connection otherwise you'll have to start over again.
 
 Now tensorflow works in CentOS 6!
+
+# Improved approach to install GCC and G++
+
+It turns out that gcc 4.9.2 is indeed available from [SCL](https://wiki.centos.org/AdditionalResources/Repositories/SCL) for Centos 6! So technically we can just use yum to install it. The procedure is described below and tested by myself.
+
+First, run the following commands to add SCL to repo list, and then install gcc and g++:
+
+```
+yum install centos-release-scl-rh
+yum install devtoolset-3-gcc devtoolset-3-gcc-c++
+```
+
+Next, you have to activate the scl shell before you can use the latest gcc/g++:
+
+```
+scl enable devtoolset-3 bash
+```
+
+Now run `gcc --version` and you can see that the version is 4.9.2 now.
+
+The obvious drawback of this approach is that you will always have to activate the scl shell first.
+
+
+
+
+
 
