@@ -187,6 +187,49 @@ Now run `gcc --version` and you can see that the version is 4.9.2 now.
 
 The obvious drawback of this approach is that you will always have to activate the scl shell first.
 
+# continue tackle CentOS 6
+
+Since the most recent Rocks uses CentOS 6 as the backbone, we need to deal with a lot of issues related to installing higher version of specific software tools. The above sections give some examples, and below I will describe more examples on installing some of the most widely used packages for Linux.
+
+1. php
+
+    It used to be the case that only PHP4 is available in CentOS 6, but recently php5 is available from epel, so that one can directly use yum to install them (from the epel repository). I consider this a solved problem. However, when combined with httpd, it will no longer work (see more explanations below).
+    
+2. httpd
+
+    The latest on CentOS 6 will be 2.2.15. This will cause a lot of practical problems, because a lot of people (so-called security experts) believe that there are vulnerability with apache and will force you to shut down your server. I followed instructions [here](http://unix.stackexchange.com/questions/138899/centos-install-using-yum-apache-2-4) and was able to install httpd 2.4 successfully. The key challenge/complication here is that one must re-write all the configuration files, since we are not technically updating a httpd package, but installing a new package called http24.
+    
+    In short, these are the steps:
+
+```
+cd /etc/yum.repos.d/
+wget http://repos.fedorapeople.org/repos/jkaluza/httpd24/epel-httpd24.repo
+yum install httpd24
+/opt/rh/httpd24/root/usr/sbin/httpd -version
+yum install php-fpm
+/etc/init.d/php-fpm start
+```
+
+    Now need to make sure that httpd24 and php-fpm automatically run when the system starts.
+
+
+```
+chkconfig --level 345 httpd off
+chkconfig --level 345 httpd24-httpd on
+chkconfig --level 345 httpd24-htcacheclean on
+```
+
+    The problem is that php web pages no longer works (i.e., PHP scripts no longer executes). The reason is that in httpd 2.2, I have `php.conf` in the `/etc/httpd/conf.d` directory that automatically loads the modules/libphp5.so module. However, this module is not available in httpd24. This is why we want to install php-fpm in the above steps.
+
+
+
+
+
+
+
+
+
+
 
 
 
