@@ -189,7 +189,7 @@ The obvious drawback of this approach is that you will always have to activate t
 
 # continue tackle CentOS 6
 
-Since the most recent Rocks uses CentOS 6 as the backbone, we need to deal with a lot of issues related to installing higher version of specific software tools. The above sections give some examples, and below I will describe more examples on installing some of the most widely used packages for Linux.
+For CentOS 6 users (including but not limited to Rocks users), we need to deal with a lot of issues related to installing higher version of specific software tools. The above sections give some examples, and below I will describe more examples on installing some of the most widely used packages for Linux.
 
 1. php
 
@@ -197,7 +197,7 @@ Since the most recent Rocks uses CentOS 6 as the backbone, we need to deal with 
     
 2. httpd
 
-    The latest on CentOS 6 will be 2.2.15. This will cause a lot of practical problems, because a lot of people (so-called security experts) believe that there are vulnerability with apache and will force you to shut down your server. I followed instructions [here](http://unix.stackexchange.com/questions/138899/centos-install-using-yum-apache-2-4) and was able to install httpd 2.4 successfully. The key challenge/complication here is that one must re-write all the configuration files, since we are not technically updating a httpd package, but installing a new package called http24.
+    The latest on CentOS 6 will be 2.2.15. This will cause a lot of practical problems, because a lot of people (so-called security experts) believe that there are vulnerability with apache and will force you to shut down your server unless you update to 2.4. I followed instructions [here](http://unix.stackexchange.com/questions/138899/centos-install-using-yum-apache-2-4) and was able to install httpd 2.4 successfully. The key challenge/complication here is that one must re-write all the configuration files, since we are not technically updating a httpd package, but installing a new package called http24.
     
     In short, these are the steps:
 
@@ -221,7 +221,12 @@ chkconfig --level 345 httpd24-htcacheclean on
 
     The problem is that php web pages no longer works (i.e., PHP scripts no longer executes). The reason is that in httpd 2.2, I have `php.conf` in the `/etc/httpd/conf.d` directory that automatically loads the modules/libphp5.so module. However, this module is not available in httpd24. This is why we want to install php-fpm in the above steps.
 
+    In general, we can just follow the instructions for [php-fpm](https://wiki.apache.org/httpd/PHP-FPM) to set up handler of php scripts. Essentially php-fpm works on 127.0.0.1 port 9000 and listen to requests and execute php as if it is a cgi script. I prefer the ProxyPassMatch method below. This statement needs to be added into every conf file for every virtual server that uses php. Unfortunately I do not see a way to add it to the main httpd.conf file so that it applies to every virtual server in the website.
 
+```
+ProxyPassMatch ^/(.*\.php(/.*)?)$ fcgi://127.0.0.1:9000/path/to/your/documentroot/$1
+DirectoryIndex /index.php index.php index.html index.htm
+````
 
 
 
