@@ -219,9 +219,9 @@ chkconfig --level 345 httpd24-httpd on
 chkconfig --level 345 httpd24-htcacheclean on
 ```
 
-    The problem is that php web pages no longer works (i.e., PHP scripts no longer executes). The reason is that in httpd 2.2, I have `php.conf` in the `/etc/httpd/conf.d` directory that automatically loads the modules/libphp5.so module. However, this module is not available in httpd24. This is why we want to install php-fpm in the above steps.
+The problem is that php web pages no longer works (i.e., PHP scripts no longer executes). The reason is that in httpd 2.2, I have `php.conf` in the `/etc/httpd/conf.d` directory that automatically loads the modules/libphp5.so module. However, this module is not available in httpd24. This is why we want to install php-fpm in the above steps.
 
-    In general, we can just follow the instructions for [php-fpm](https://wiki.apache.org/httpd/PHP-FPM) to set up handler of php scripts. Essentially php-fpm works on 127.0.0.1 port 9000 and listen to requests and execute php as if it is a cgi script. I prefer the ProxyPassMatch method below. This statement needs to be added into every conf file for every virtual server that uses php. Unfortunately I do not see a way to add it to the main httpd.conf file so that it applies to every virtual server in the website.
+   In general, we can just follow the instructions for [php-fpm](https://wiki.apache.org/httpd/PHP-FPM) to set up handler of php scripts. Essentially php-fpm works on 127.0.0.1 port 9000 and listen to requests and execute php as if it is a cgi script. I prefer the ProxyPassMatch method below. This statement needs to be added into every conf file for every virtual server that uses php. Unfortunately I do not see a way to add it to the main httpd.conf file so that it applies to every virtual server in the website.
 
 ```
 ProxyPassMatch ^/(.*\.php(/.*)?)$ fcgi://127.0.0.1:9000/path/to/your/documentroot/$1
