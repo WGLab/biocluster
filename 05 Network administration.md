@@ -43,6 +43,25 @@ MTU=65520
 
 Finally, do not set up iptables (`/etc/iptables`) yourself for the same reasons. See more details later in this article.
 
+## Adding infiniband to a system
+
+By default, if an infiniband card is already present in the system, then IB-related packages (such as opensm and ibutils and drivers) will be installed automatically by Rocks. However, occasionally this is not the case, and sometimes you may want to add IB to an existing Rocks installation. How shall we address this?
+
+I found that simply doing `yum install openib ibutils infiniband-diags opensm` does not solve the prlblem per se. I still get an error `umad_init: can't read ABI version from /sys/class/infiniband_mad/abi_version` if I run `ibhosts`.
+
+To address, this, I have to download OFED version 3.4-1.0.0.0 (which is suitable for CentOS 6.6) from http://www.mellanox.com/page/mlnx_ofed_matrix?mtag=linux_sw_drivers. Install it in head node first. Then do a `mkdir -p /export/rocks/install/contrib/extra/install` and copy this file to this directory. Then edit `/export/rocks/install/site-profiles/6.2/nodes/extend-compute.xml` and add the lines:
+
+```
+wget http://10.1.1.1/install/contrib/extra/install/MLNX_OFED_LINUX-3.4-1.0.0.0-rhel6.6-x86_64.tgz
+tar xvfz MLNX_OFED_LINUX-3.4-1.0.0.0-rhel6.6-x86_64.tgz
+echo y | ./mlnxofedinstall
+service openibd restart
+```
+
+Then `cd /export/rocks/install; rocks create distro`, and ssh into each compute node and reinstall it by `/boot/kickstart/cluster-kickstart`.
+
+
+
 ## Infiniband specific configuration and commands
 
 ### Change MTU for IB card for the cluster
