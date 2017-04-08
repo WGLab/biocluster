@@ -253,8 +253,9 @@ R is a statistical computing language that is commonly used in bioinformatics. H
 - Troubleshooting
 
     In recent versions of Rocks, I cannot use yum to install R, and typical error messages are below:
-    ```
-    Error: Package: R-core-3.2.3-1.el6.x86_64 (epel)
+
+```
+Error: Package: R-core-3.2.3-1.el6.x86_64 (epel)
            Requires: libicuuc.so.42()(64bit)
 Error: Package: R-core-devel-3.2.3-1.el6.x86_64 (epel)
            Requires: blas-devel >= 3.0
@@ -270,10 +271,11 @@ Error: Package: R-core-devel-3.2.3-1.el6.x86_64 (epel)
            Requires: libicu-devel
  You could try using --skip-broken to work around the problem
  You could try running: rpm -Va --nofiles --nodigest
- ```
+```
  
    To solve this, install each one manually and finally just do a manual "rpm -ivh --nodeps x.rpm" one by one and in the end it will work. Go to www.rpmfind.net/ to find each RPM for Centos 6:
-   ```
+
+```
    [root@biocluster ~]# wget ftp://195.220.108.108/linux/centos/6.7/os/x86_64/Packages/libicu-4.2.1-12.el6.x86_64.rpm
    [root@biocluster ~]# rpm -ivh libicu-4.2.1-12.el6.x86_64.rpm 
    [root@biocluster ~]# wget ftp://195.220.108.108/linux/centos/6.7/os/x86_64/Packages/libicu-devel-4.2.1-12.el6.x86_64.rpm
@@ -284,7 +286,7 @@ Error: Package: R-core-devel-3.2.3-1.el6.x86_64 (epel)
    [root@biocluster ~]# wget ftp://195.220.108.108/linux/centos/6.7/os/x86_64/Packages/lapack-devel-3.2.1-4.el6.x86_64.rpm
    [root@biocluster ~]# wget ftp://195.220.108.108/linux/centos/6.7/os/x86_64/Packages/blas-3.2.1-4.el6.x86_64.rpm
    [root@biocluster ~]# wget ftp://195.220.108.108/linux/centos/6.7/os/x86_64/Packages/blas-devel-3.2.1-4.el6.x86_64.rpm
-   ```
+```
 
 ## Install optional packages
 
