@@ -77,7 +77,8 @@ Once a few years, we will need to upgrade the entire Rocks system to a new versi
 6. Add `/export 192.168.1.1/255.255.255.0(fsid=0,rw,async,insecure,no_root_squash)` to /etc/exports, so that the `/export` directory can be shared to local ib network
 7. `service nfs restart` in nas-0-0, and then edit `/etc/auto.home` in biocluster to ensure using nfs protocol for mounting, then things all work now.
 8. I found that if I reinstall an IBM node, then it can never be booted again by PXE (hang on “Loading from disk…”). The solution is to run these three commands in head node.
-    ```
+
+```
 # rocks add bootaction action=os args="hd0" kernel="com32 chain.c32"
 # rocks list bootaction
 # cp /usr/share/syslinux/chain.c32 /tftpboot/pxelinux/
