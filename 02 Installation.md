@@ -85,6 +85,7 @@ Once a few years, we will need to upgrade the entire Rocks system to a new versi
 ```
 
 The root cause is due to specific IBM hardware configurations. See https://lists.sdsc.edu/pipermail/npaci-rocks-discussion/2012-May/057812.html for details.
+
 9. use `qconf -me <hostname>` to modify complex_value such as as h_vmem=48G for each host. use `qconf -mq all.q` to modify the default h_vmem for each job. For some reason, these configurations are not kept during upgrading so they must be configured again.
 10. Other misc changes, such as changing the way user creation is handled, etc.
 
