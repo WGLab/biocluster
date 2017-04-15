@@ -47,9 +47,9 @@ Finally, do not set up iptables (`/etc/iptables`) yourself for the same reasons.
 
 By default, if an infiniband card is already present in the system, then IB-related packages (such as opensm and ibutils and drivers) will be installed automatically by Rocks. However, occasionally this is not the case, and sometimes you may want to add IB to an existing Rocks installation. How shall we address this?
 
-I found that simply doing `yum install openib ibutils infiniband-diags opensm` does not solve the prlblem per se. I still get an error `umad_init: can't read ABI version from /sys/class/infiniband_mad/abi_version` if I run `ibhosts`.
+I found that simply doing `yum install openib ibutils infiniband-diags opensm` does not solve the problem per se. I still get an error `umad_init: can't read ABI version from /sys/class/infiniband_mad/abi_version` if I run `service openibd restart; service opensmd restart` followed by `ibhosts`. This occurs in some systems, but not other systems.
 
-To address, this, I have to download OFED version 3.4-1.0.0.0 (which is suitable for CentOS 6.6) from http://www.mellanox.com/page/mlnx_ofed_matrix?mtag=linux_sw_drivers. Install it in head node first. Then do a `mkdir -p /export/rocks/install/contrib/extra/install` and copy this file to this directory. Then edit `/export/rocks/install/site-profiles/6.2/nodes/extend-compute.xml` and add the lines to the `<post> </post>` section:
+To address this problem, I have to download OFED version 3.4-1.0.0.0 (which is suitable for CentOS 6.6) from http://www.mellanox.com/page/mlnx_ofed_matrix?mtag=linux_sw_drivers. Install it in head node first. Then do a `mkdir -p /export/rocks/install/contrib/extra/install` and copy this file to this directory. Then edit `/export/rocks/install/site-profiles/6.2/nodes/extend-compute.xml` and add the lines to the `<post> </post>` section:
 
 ```
 echo 'Installing OFED...'
@@ -60,6 +60,7 @@ tar xvfz MLNX_OFED_LINUX-3.4-1.0.0.0-rhel6.6-x86_64.tgz 2> /root/temp3 > /root/t
 echo y | ./MLNX_OFED_LINUX-3.4-1.0.0.0-rhel6.6-x86_64/mlnxofedinstall 2> /root/temp4 > /root/temp4.5
 /etc/init.d/openibd restart 2> /root/temp5 > /root/temp5.5
 cd /
+/etc/init.d/openibd restart
 ```
 
 The direction of stderr and stdout is to help diagnose potential problems if installation fails. From head node, you may also do a `rocks list host profile compute-0-0 > /dev/null` to check if there is any error message in compiling this xml file in kickstart script.
