@@ -10,16 +10,16 @@ I am the Principal Investigator of a [bioinformatics lab](http://wglab.org). In 
 
 This tutorial is organized into several main sections:
 
-- [Hardware](01 Hardware.md)
-- [Installation](02 Installation.md)
-- [System customization](03 System customization.md)
-- [User account administration](04 User account administration.md)
-- [Network administration](05 Network administration.md)
-- [SGE administration](06 SGE administration.md)
-- [Storage administration](07 Storage administration.md)
-- [NFS administration](08 NFS administration.md)
-- [Remote management](09 Remote management.md)
-- [Misc Linux configuration](10 Misc Linux configuration.md)
+- [Hardware](01%20Hardware.md)
+- [Installation](02%20Installation.md)
+- [System customization](03%20System%20customization.md)
+- [User account administration](04%20User%20account%20administration.md)
+- [Network administration](05%20Network%20administration.md)
+- [SGE administration](06%20SGE%20administration.md)
+- [Storage administration](07%20Storage%20administration.md)
+- [NFS administration](08%20NFS%20administration.md)
+- [Remote management](09%20Remote%20management.md)
+- [Misc Linux configuration](10%20Misc%20Linux%20configuration.md)
 
 ## Contact
 
