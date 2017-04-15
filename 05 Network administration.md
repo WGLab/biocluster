@@ -60,7 +60,6 @@ tar xvfz MLNX_OFED_LINUX-3.4-1.0.0.0-rhel6.6-x86_64.tgz 2> /root/temp3 > /root/t
 echo y | ./MLNX_OFED_LINUX-3.4-1.0.0.0-rhel6.6-x86_64/mlnxofedinstall 2> /root/temp4 > /root/temp4.5
 /etc/init.d/openibd restart 2> /root/temp5 > /root/temp5.5
 cd /
-/etc/init.d/openibd restart
 ```
 
 Recently, I verified that MLNX_OFED version 4.0 also works okay:
@@ -73,7 +72,6 @@ tar xvfz MLNX_OFED_LINUX-4.0-2.0.0.1-rhel6.6-x86_64.tgz 2> /root/temp3 > /root/t
 echo y | ./MLNX_OFED_LINUX-4.0-2.0.0.1-rhel6.6-x86_64/mlnxofedinstall 2> /root/temp4 > /root/temp4.5
 /etc/init.d/openibd restart 2> /root/temp5 > /root/temp5.5
 cd /
-/etc/init.d/openibd restart
 ```
 
 The direction of stderr and stdout is to help diagnose potential problems if installation fails. From head node, you may also do a `rocks list host profile compute-0-0 > /dev/null` to check if there is any error message in compiling this xml file in kickstart script.
