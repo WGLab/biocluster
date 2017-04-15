@@ -324,4 +324,19 @@ This is almost always caused by low-quality cable. Replace with a better CAT6 ca
 
 Depending on your motherboard, eth0/eth1 can be called em1/em2, for example in Dell C6100 servers.
 
+## incorrect MAC address
+
+Sometimes ib programs cannot detect the MAC address for ib card correctly, resulting in configuration errors. This is very difficult to diagnose in my experience. The following command can be used to check this problem, and fix it by manually changing MAC.
+
+```
+[root@ ~]# ssh compute-0-0 ifdown ib0
+Device ib0 has MAC address A0:00:02:20:FE:80:00:00:00:00:00:00:00:02:C9:03:00:0E:50:E9, instead of configured address 80:00:00:48:FE:80:00:00:00:00:00:00:00:02:C9:03:00:0E:50:E9. Ignoring.
+[root@ ~]# rocks set host interface mac compute-0-0 iface=ib0 mac=A0:00:02:20:FE:80:00:00:00:00:00:00:00:02:C9:03:00:0E:50:E9
+[root@ ~]# rocks sync host network compute-0-0
+```
+
+
+
+
+
 
