@@ -161,7 +161,7 @@ E states do not go away automatically, even if you reboot the cluster. Once you 
 
 When deleting a job, sometimes a "dr" will show up, indicating that the job is not running correctly and cannot be easily deleted. In this case, log in as "su", then "qdel <jobid>" to delete the job forcefully. If it does not work, do "qdel -f <jobid>" to delete the job.
 
-## when node is in E state
+## When node is in E state
 
 re-install the node, then clear the Error log:
 
@@ -172,6 +172,8 @@ root@biocluster.med.usc.edu changed state of "all.q@compute-0-2.local" (no error
 See more explanations here: http://www.gridengine.info/2008/01/20/understanding-queue-error-state-e/
 
 When machine restarts yet nodes are still full, use `qstat -u "*"` to show whose jobs are in dr state, then qdel these jobs
+
+If a node continues to be in E state after clearing the error multiple times by qmod, then it is likely that there is a hardware error. In this case, try `rocks set host runaction compute-0-0 action=memtest` and restart the node to check for potential issues. 
 
 ## Check error messages from SGE
 
