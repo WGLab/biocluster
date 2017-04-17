@@ -35,7 +35,7 @@ The next step is to install storage node. You can certainly install compute node
 
 > Technical note: It is extremely important that the compute node is set to PXE boot first, since the head node is expecting a DHCP request from the compute node and is sending the installation package to the compute node. It is also very important that you set up a static IP address (rather than DHCP) for IPMI port in compute node (more details [here](09 Remote management.md), if you share IPMI port with eth0; otherwise, IPMI will hijack your installation by issuing a DHCP request before eth0 does.
 
-> Troubleshooting: Sometimes all nodes fail to install with 'PXE: TFTP open time out' error message, after DHCP request is successfully made and with correct IP address is assigned. This is due to TFTP server problem in head node. I found that `service xinetd restart` and `service dhcpd restart` together can solve the problem.
+> Troubleshooting: Sometimes all nodes fail to install with 'PXE: TFTP open time out' error message, after DHCP request is successfully made and with correct IP address is assigned. This is due to TFTP server problem in head node. I found that `service xinetd restart` (and sometimes together with `service dhcpd restart`) can solve the problem.
 
 ## Re-install nodes
 
