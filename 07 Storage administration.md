@@ -215,7 +215,7 @@ Number  Start   End     Size    File system  Name     Flags
  1      1049kB  99.9TB  99.9TB               primary
 ```
 
-2. create a physical volume which takes up all spaces in `/dev/sdb`:
+2. create a physical volume which takes up all spaces in `/dev/sdb`. If pvcreate is not available, do a `yum install lvm2` first.
 
 ```
 [root@nas-0-0 ~]# pvcreate /dev/sdb1 
@@ -253,7 +253,7 @@ Number  Start   End     Size    File system  Name     Flags
   Logical volume "export" created
 ```
 
-5. Create XFS in the `/export` (if `mkfs.xfs` is not available, do a `yum install xfsprog` first):
+5. Create XFS in the `/export` (if `mkfs.xfs` is not available, do a `yum install xfsprogs` first):
 
 ```
 [root@nas-0-0 ~]# mkfs.xfs /dev/mapper/nas--0--0-export
