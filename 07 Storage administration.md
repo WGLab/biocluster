@@ -185,7 +185,7 @@ To create a new volume, follow the procedure:
 
 1. do `parted /dev/sdb`, use `mklabel gpt` to make a GPT partition table (default is MSDOS which does not handle >4TB partition). use `print` to view it, then use `mkpart primary 0% 100%` to automatically create a partition that is optimal (if I use `mkpart primary 0 100%` it will create mis-aligned partitions). An example is given below:
 
-    ```
+```
 (parted) print                                                            
 Model: AVAGO MR9361-8i (scsi)
 Disk /dev/sdb: 99.9TB
@@ -217,7 +217,7 @@ Number  Start   End     Size    File system  Name     Flags
 
 2. create a physical volume which takes up all spaces in `/dev/sdb`:
 
-    ```
+```
 [root@nas-0-0 ~]# pvcreate /dev/sdb1 
   Writing physical volume data to disk "/dev/sdb1"
   Physical volume "/dev/sdb1" successfully created
@@ -227,7 +227,8 @@ Number  Start   End     Size    File system  Name     Flags
 ```
 
 3. If you have multiple logical drives, do this for `/dev/sdc`, `/dev/sdd` and so on.
-    ```
+ 
+ ```
 [root@nas-0-7 ~]# pvscan 
   PV /dev/sdb1                      lvm2 [90.86 TiB]
   PV /dev/sdc1                      lvm2 [87.32 TiB]
@@ -237,7 +238,7 @@ Number  Start   End     Size    File system  Name     Flags
 
 4. Create a volume group, which may have one or more physical volumes
 
-    ```
+```
 [root@nas-0-0 ~]# vgcreate nas-0-0 /dev/sdb1 /dev/sdc1 /dev/sdd1
   Volume group "nas-0-0" successfully created
 [root@nas-0-0 ~]# vgscan
@@ -247,14 +248,14 @@ Number  Start   End     Size    File system  Name     Flags
 
 4. Create a logical volume called `export` that takes up all space in the nas-0-0 volume group.
 
-    ```
+```
 [root@nas-0-0 ~]# lvcreate -l 100%FREE -n export nas-0-0
   Logical volume "export" created
 ```
 
 5. Create XFS in the `/export` (if `mkfs.xfs` is not available, do a `yum install xfsprog` first):
 
-    ```
+```
 [root@nas-0-0 ~]# mkfs.xfs /dev/mapper/nas--0--0-export
 meta-data=/dev/mapper/nas--0--0-export isize=256    agcount=266, agsize=268435455 blks
          =                       sectsz=512   attr=2, projid32bit=0
@@ -270,7 +271,7 @@ realtime =none                   extsz=4096   blocks=0, rtextents=0
 
 6. After nas-0-0 installation is done, add `/dev/mapper/nas--0--0-export /export            xfs     defaults        0 0` to `/etc/fstab`, so that the LVM is mounted to `/export` every time nas-0-0 is started. Additionally, add `/export 10.1.1.1/255.255.0.0(fsid=0,rw,async,insecure,no_root_squash)` to /etc/exports, so that the “/export” directory can be shared to local ib network.
 
-    ```
+```
 [root@nas-0-0 ~]# moutn /export
 [root@nas-0-0 ~]# df -h
 Filesystem            Size  Used Avail Use% Mounted on
