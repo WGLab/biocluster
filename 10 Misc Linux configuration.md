@@ -164,6 +164,29 @@ cp /opt/gcc-4.9.3/lib64/libstdc++.so.6.0.20 /usr/lib64/libstdc++.so.6.0.20
 
 The make process itself should take 60-120 minutes depending on your computer's configuration. It will be an extremely boring period of time; but it is also a good time for you to take a rest, look at the computer screen and start thinking about the true meaning of life. Make sure you do not lose internet connection otherwise you'll have to start over again.
 
+In the end, make sure that it is compiled correctly:
+
+```
+[kaiwang@phoenix ~/]$ gcc -v -x c -E -
+Using built-in specs.
+COLLECT_GCC=gcc
+Target: x86_64-unknown-linux-gnu
+Configured with: ../configure --prefix=/opt/gcc-4.9.3
+Thread model: posix
+gcc version 4.9.3 (GCC) 
+COLLECT_GCC_OPTIONS='-v' '-E' '-mtune=generic' '-march=x86-64'
+ /opt/gcc-4.9.3/libexec/gcc/x86_64-unknown-linux-gnu/4.9.3/cc1 -E -quiet -v - -mtune=generic -march=x86-64
+ignoring nonexistent directory "/opt/gcc-4.9.3/lib/gcc/x86_64-unknown-linux-gnu/4.9.3/../../../../x86_64-unknown-linux-gnu/include"
+#include "..." search starts here:
+#include <...> search starts here:
+ /opt/gcc-4.9.3/lib/gcc/x86_64-unknown-linux-gnu/4.9.3/include
+ /usr/local/include
+ /opt/gcc-4.9.3/include
+ /opt/gcc-4.9.3/lib/gcc/x86_64-unknown-linux-gnu/4.9.3/include-fixed
+ /usr/include
+End of search list.
+```
+
 Now tensorflow works in CentOS 6!
 
 # Improved approach to install GCC and G++
