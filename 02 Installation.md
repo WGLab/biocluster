@@ -65,6 +65,15 @@ Alternatively, if the machine is accessible, you can just login and use `/boot/k
 
 > Sometimes a node fails, and you specify to re-install the node and forced to restart the computer. However, the computer displays various error messages, such as "DHCP -/|\" hanging, or "hard drive parameter not found", or "no hard drive found". Sometimes, during Rocks install, the message "loading vmlinz...................." shows up and then freezes, or the "waiting for hardware to initialize" message that freezes. I found that all these problems were due to hard drive issues. After switching hard drive, all the issues were resolved.
 
+## Re-install the node from hard drive
+
+You can also force a PXE boot for a node (if it is running without issue), by logging as root, and running `/boot/kickstart/cluster-kickstart`. You will not see the command unless you are root. The node will reboot and re-install from network.
+
+If the machine restarts but you change mind, you can unplug network cable, press ESC during the booting process, and then select the option to enter Rocks from the grub screen. After it boots into operating system, execute `/boot/kickstart/cluster-kickstart --stop` to stop booting from PXE during the next reboot.
+
+Under the scene, for some BIOS in computer servers, if there is a any paritition info on the disk it will not fall through to pxe, even if none of the parts are bootable (so if you set up drive before PXE in the booting order, the PXE will never be used). So this command essentially change a bit in the hard drive to force a PXE boot. 
+
+
 ## Upgrading the system
 
 Once a few years, we will need to upgrade the entire Rocks system to a new version. The general procedure that I used to upgrade version 5 to version 6 is detailed below.
