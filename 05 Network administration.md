@@ -253,6 +253,8 @@ Now do this:
 [root@biocluster /]$ rocks sync host network compute-0-0
 ```
 
+Note that the 128.125.249.xxx is the gateway address, which needs to be specified correctly. If you do not know what is the gateway, check the head node's gateway using the `route` command. This information by design was not included in the subnet set up (so `rocks list network` will not show it), and needs to be provided by users instead.
+
 Now compute-0-0 can access internet directly through eth1.
 
 ## 10G ethernet specific settings
