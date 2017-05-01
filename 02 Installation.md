@@ -98,4 +98,11 @@ The root cause is due to specific IBM hardware configurations. See https://lists
 9. use `qconf -me <hostname>` to modify complex_value such as as h_vmem=48G for each host. use `qconf -mq all.q` to modify the default h_vmem for each job. For some reason, these configurations are not kept during upgrading so they must be configured again.
 10. Other misc changes, such as changing the way user creation is handled, etc.
 
+## Installing login appliance
+
+A login appliance is a host that users use to build, launch and monitor their application(s). This host is a subset of a frontend appliance (a frontend runs several other services that are used to install and maintain all the nodes in the system). The login appliance can be installed using `insert-ethers` and selecting login appliance as the type.
+
+To add X-windows to the login device, just do a `rocks set host attr login-0-0 x11 true` and then reinstall the node. Afer testing that `startx` runs okay, you can then edit `/etc/inittab` from 3 to 5.
+
+Some other users reported that using `yum groupinstall " X Window system"  " genome desktop"` will also work. However, this will not survive a system reinstall in the login appliance.
 
