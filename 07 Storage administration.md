@@ -482,7 +482,7 @@ sdb      8:16   0 223.6G  0 disk
 
 Sometimes a system may become extremely slow and unreponsive. Running `top` shows that I/O wait value is very high, suggesting that storage is the main reason. It is not straightforward to diagnose what is causing the problem, but there are a few things that you may try.
 
-First in `top`, press shift+f, and then press `n`, to sort all jobs by the memory usage. It is possible that a specific job is using a very large amount of memory so that it begins to use up swap space, resulting in slow performance of the system. If so, kill this job.
+First in `top`, press `M`, to sort all jobs by the memory usage. It is possible that a specific job is using a very large amount of memory so that it begins to use up swap space, resulting in slow performance of the system. If so, kill this job.
 
 Next, do `iostat -x -d 2`, to check the I/O status for different devices in the system. A consistently high %util indicates potential problems with the volume.
 
