@@ -478,6 +478,85 @@ sdb      8:16   0 223.6G  0 disk
 `-sdb1   8:17   0 223.6G  0 part /state/partition1
 ```
 
+## diagnosing high I/O wait
+
+Sometimes a system may become extremely slow and unreponsive. Running `top` shows that I/O wait value is very high, suggesting that storage is the main reason. It is not straightforward to diagnose what is causing the problem, but there are a few things that you may try.
+
+First in `top`, press shift+f, and then press `n`, to sort all jobs by the memory usage. It is possible that a specific job is using a very large amount of memory so that it begins to use up swap space, resulting in slow performance of the system. If so, kill this job.
+
+Next, do `iostat -x -d 2`, to check the I/O status for different devices in the system. A consistently high %util indicates potential problems with the volume.
+
+```
+[root@nas-0-1 /]$ iostat -x -d 1
+Linux 2.6.32-504.16.2.el6.x86_64 (nas-0-1.local)        05/25/2017      _x86_64_        (8 CPU)
+
+Device:         rrqm/s   wrqm/s     r/s     w/s   rsec/s   wsec/s avgrq-sz avgqu-sz   await  svctm  %util
+sda               0.05     6.34    0.14    0.42    23.21    54.11   139.23     0.02   28.45   5.17   0.29
+sdb               0.02     0.03    4.42    2.92   360.25  1501.07   253.36     0.22   29.39   2.35   1.73
+sdd               0.14     0.01    6.63    6.39  1831.61  3420.39   403.34     0.16   12.53   1.98   2.58
+sde               0.08     0.01    5.05    5.94  1368.72  3181.95   413.95     0.25   22.62   1.41   1.55
+sdc               0.00     0.00    0.90    1.48   238.15   775.68   426.22     0.14   58.12   1.32   0.31
+sdg               0.07     0.01    4.81    6.57  1304.04  3520.98   423.93     0.07    6.55   1.51   1.72
+sdf               0.11     0.02    5.00    7.03  1375.41  3767.08   427.66     0.10    8.29   1.59   1.91
+dm-0              0.00     0.00   27.24   30.20  6478.19 16167.15   394.21     0.11    1.84   0.98   5.63
+
+Device:         rrqm/s   wrqm/s     r/s     w/s   rsec/s   wsec/s avgrq-sz avgqu-sz   await  svctm  %util
+sda               0.00     0.00    1.00    0.00    16.00     0.00    16.00     0.03   25.00  25.00   2.50
+sdb               0.00     0.00    0.00    0.00     0.00     0.00     0.00     0.00    0.00   0.00   0.00
+sdd               3.00     0.00    5.00  210.00  2048.00 114800.00   543.48   147.54  662.59   4.53  97.50
+sde               0.00     0.00    0.00    0.00     0.00     0.00     0.00     0.00    0.00   0.00   0.00
+sdc               0.00     0.00    0.00    0.00     0.00     0.00     0.00     0.00    0.00   0.00   0.00
+sdg               0.00     0.00   15.00    0.00  4096.00     0.00   273.07     0.31   20.73   8.60  12.90
+sdf               0.00     0.00    2.00    0.00   512.00     0.00   256.00     0.04   33.50  11.00   2.20
+dm-0              0.00     0.00   23.00  194.00  6144.00 106040.00   516.98   149.87  666.91   4.49  97.40
+```
+
+Usually you can use `dmsetup info /dev/dm-0` and `lsblk` to check exactly how the LVM partitions are used. In this case, there are 7 drives that are combined into the dm-0.
+
+```
+[root@nas-0-1 /]$ dmsetup info /dev/dm-0 
+Name:              nas--0--1-export
+State:             ACTIVE
+Read Ahead:        256
+Tables present:    LIVE
+Open count:        1
+Event number:      0
+Major, minor:      253, 0
+Number of targets: 6
+UUID: LVM-GPKU7vxQUCQnWpkSqkU2zyM23bhARXQbTwDgtk942TUELdbHhVlGXAlzJzZsvXgT
+[root@nas-0-1 /]$ lsblk 
+NAME                        MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+sda                           8:0    0   100G  0 disk 
+|-sda1                        8:1    0  78.1G  0 part /
+`-sda2                        8:2    0  21.9G  0 part [SWAP]
+sdb                           8:16   0  57.2T  0 disk 
+`-sdb1                        8:17   0  57.2T  0 part 
+  `-nas--0--1-export (dm-0) 253:0    0 372.8T  0 lvm  /export
+sdd                           8:48   0  76.4T  0 disk 
+`-sdd1                        8:49   0  76.4T  0 part 
+  `-nas--0--1-export (dm-0) 253:0    0 372.8T  0 lvm  /export
+sde                           8:64   0  69.1T  0 disk 
+`-sde1                        8:65   0  69.1T  0 part 
+  `-nas--0--1-export (dm-0) 253:0    0 372.8T  0 lvm  /export
+sdc                           8:32   0  24.6T  0 disk 
+`-sdc1                        8:33   0  24.6T  0 part 
+  `-nas--0--1-export (dm-0) 253:0    0 372.8T  0 lvm  /export
+sdg                           8:96   0  65.5T  0 disk 
+`-sdg1                        8:97   0  65.5T  0 part 
+  `-nas--0--1-export (dm-0) 253:0    0 372.8T  0 lvm  /export
+sdf                           8:80   0    80T  0 disk 
+`-sdf1                        8:81   0    80T  0 part 
+  `-nas--0--1-export (dm-0) 253:0    0 372.8T  0 lvm  /export
+  ```
+
+Next, use the `ps` command to check what programs are running that may consume too much I/O resources. This is borrowed from [this post](http://bencane.com/2012/08/06/troubleshooting-high-io-wait-in-linux/). 
+
+```
+ # for x in `seq 1 1 10`; do ps -eo state,pid,cmd | grep "^D"; echo "----"; sleep 5; done
+```
+
+If a program shows up consistently in D state, it means that it is always waiting I/O. Now you can use `lsof -p <pid>` to find out what files are being written or read.
+
 
 
 
