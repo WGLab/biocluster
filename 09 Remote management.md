@@ -47,6 +47,15 @@ Setting LAN Default Gateway IP to 10.1.1.1
 
 Finally, use `ipmitool lan print 1` to check the new configurations.
 
+Sometimes you may want to change IPMI from dedicated to shared, or shared to dedicated. The general instructions are given below for Supermicro IPMI (based on [FAQ here](http://www.supermicro.com/support/faqs/faq.cfm?faq=9829)):
+
+```
+Ipmitool raw 0x30 0x70 0x0c 0 //get lan mode 
+Ipmitool raw 0x30 0x70 0x0c 1 0/1/2 //set to dedicated/share/failover mode
+```
+
+
+
 ## KVM access to head node over IPMI
 
 Almost all server manufacturers will allow remote KVM (keyboard-video-mouse) over IPMI to access to server, though some of them charges extra fees for using this feature. Basically, this feature allows you to run a Java program to use open a screen in your own computer that attach to KVM of the remote head node.
