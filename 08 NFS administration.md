@@ -58,7 +58,7 @@ Some of the following points can be used to improve performance:
 3. Reload config info (`service autofs reload`)
 4. You may want to tune LSI RAID card parameters as well to improve read/write performance. The following command ensures write-back, read-ahead, and use cache even if a bad battery is encountered (the latest generation of card no longer use battery though).
 
-     ```
+```
 /opt/MegaRAID/MegaCli/MegaCli64 -LDSetProp WB -LALL -aALL
 /opt/MegaRAID/MegaCli/MegaCli64 -LDSetProp CachedBadBBU -Lall -aAll
 /opt/MegaRAID/MegaCli/MegaCli64 -LDSetProp RA -LALL -aALL
@@ -69,12 +69,15 @@ Some of the following points can be used to improve performance:
 The following instructions are outdated, as we are not using RDMA now. However, it may be helpful to some readers:
 
 Regardless of how the client was built (module or built-in), use this command to mount the NFS/RDMA server:
+
 ```
 $ mount -o rdma,port=20049 <IPoIB-server-name-or-address>:/<export> /mnt
 ```
+
 To verify that the mount is using RDMA, run "cat /proc/mounts" and check the "proto" field for the given mount. 
 
 ### Read Ahead and IO scheduler tuning
+
 ```
 [root@nas-0-0 /home/kaiwang]$ blockdev --report
 RO    RA   SSZ   BSZ   StartSec            Size   Device
@@ -85,6 +88,7 @@ rw   256   512   512          0 154289712398336   /dev/dm-0
 ```
 
 To change the 'Read-Ahead' value to 8 MB (16384 times of 512 bytes blocks).
+
 ```
 # blockdev --setra 16384 /dev/mapper/nas--0--0-export
 ```
