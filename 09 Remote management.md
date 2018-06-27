@@ -50,8 +50,8 @@ Finally, use `ipmitool lan print 1` to check the new configurations.
 Sometimes you may want to change IPMI from dedicated to shared, or shared to dedicated. The general instructions are given below for Supermicro IPMI (based on [FAQ here](http://www.supermicro.com/support/faqs/faq.cfm?faq=9829)):
 
 ```
-Ipmitool raw 0x30 0x70 0x0c 0 //get lan mode 
-Ipmitool raw 0x30 0x70 0x0c 1 0/1/2 //set to dedicated/share/failover mode
+ipmitool raw 0x30 0x70 0x0c 0 //get lan mode 
+ipmitool raw 0x30 0x70 0x0c 1 0/1/2 //set to dedicated/share/failover mode
 ```
 
 
