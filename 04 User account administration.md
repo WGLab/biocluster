@@ -27,6 +27,8 @@ Under the scene, this is what happened when I add a new user called `kaiwang5`:
 4. we should automount each user, not the whole `/home`. Therefore, autofs is used for every user, as specified in the `/etc/auto.home` file.
 5. `rocks list attr` will print out all Rocks variables. You may want to examine them and change some of them. For example, the `Info_HomeDirSrv` needs to be `nas-0-0-ib.ipoib`, rather than `nas-0-0`, to make sure that we use IB traffic for NFS.
 
+Additional update in 2018: I tested the procedure above and it works well for the new Rocks 7. The only difference is to change python2.6 to python2.7 above. Another slight difference relates to IB configuration, where one has to manually add IB port, as it is not automatic (all the ethernet ports are automatically detected though).
+
 ## Standard procedure for adding a new user
 
 1. login by “su -”
