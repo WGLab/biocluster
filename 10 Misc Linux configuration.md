@@ -252,10 +252,29 @@ DirectoryIndex /index.php index.php index.html index.htm
 ````
 
 
+# install google chrome
 
+The procedure below has been tested on Rocks 7 and it works well.
 
+First, edit `/etc/yum.repos.d/google-chrome.repo` and add following lines:
 
+```
+[google-chrome]
+name=google-chrome
+baseurl=http://dl.google.com/linux/chrome/rpm/stable/$basearch
+enabled=1
+gpgcheck=1
+gpgkey=https://dl-ssl.google.com/linux/linux_signing_key.pub
+```
 
+Then run `yum info google-chrome-stable` to make sure that the repo can be found. Then do
+
+```
+[root@biocluster nodes]# yum --enablerepo=epel install libappindicator-gtk3
+[root@biocluster nodes]# yum install google-chrome-stable
+```
+
+Type `google-chrome` to launch the browser.
 
 
 
