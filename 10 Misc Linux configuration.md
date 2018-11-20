@@ -276,6 +276,41 @@ Then run `yum info google-chrome-stable` to make sure that the repo can be found
 
 Type `google-chrome` to launch the browser.
 
+# install MongoDB in Rocks 7 (CentOS 7) to work with PHP
+
+The procedure below describes my journal to set up PHP-based web server under Rocks 7 that uses MongoDB. It is not straightforward and I hope that I remember everything that I have done, but I may have missed something below.
+
+First, install MongoDB. Just follow standard instructions at https://docs.mongodb.com/v3.2/tutorial/install-mongodb-on-red-hat/. Remember CentoOS is based on RedHat, so the same procedure works. Note that by default "SELINUX=disabled" in Rocks, but it may not be the case in typical CentOS. Make sure to run `service mongod start` to start the service. Unlike previous versions of CentOS, the `chkconfig` command only works for SysV services now, and you need to use `systemctl` for other services. But anyway, if you just run `chkconfig mongod on`, it will automatically re-direct the command to `systemctl enable mongod.service` to make sure that mongod service runs when the computer restarts. 
+
+Next, install PHP driver for MongoDB. If you google, you will see tons of articles about how to do this. But unfortunately I tried to follow them and cannot get things work. For example, in https://github.com/mongodb/mongo-php-library, they mentioned that it is simply a `pecl install mongodb` command that would work. However, this does not work for a few reasons: (1) pecl is not even available in rocks (2) even if it is available, it shows "pecl/mongodb requires PHP (version >= 5.5.0)" message yet Rocks 7 only has PHP 5.4. Other sites suggested doing `yum install php-pecl-mongo` which does not work for me since this package is not found anywhere. Official PHP site (http://php.net/manual/en/mongodb.installation.pecl.php) also suggested similar method but again it does not work in Rocks 7.
+
+Finally, I realized that I need to install mongo, not mongodb, based on https://secure.php.net/manual/en/mongo.installation.php. After PHP 5.6, the developers decided to change the name from mongo to mongodb, which is why when you google, you only find information about mongodb instead of mongo. This is incredibly confusing.
+
+The way I solved this problem is to install mongo, rather than mongodb. First, install epel and remi repository (`yum install http://rpms.remirepo.net/enterprise/remi-release-7.rpm`), since many things require these two repositories. Then, `yum --enablerepo=remi install php-pear`, which basically installs the pecl command into the system. Then, `yum --enablerepo=remi install php-devel` and `pecl install mongo`.
+
+Then add the two `[MongoDB] extension=mongo.so` lines to `/etc/php.ini`. Again, note that we are not doing `extension=mongodb.so`, but `extension=mongo.so`.
+
+Finally, do a `service httpd restart`. Then check a random page that has `<?php phpinfo() ?>` in it, to see if mongo is now loaded to PHP.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
