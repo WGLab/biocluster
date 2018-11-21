@@ -19,7 +19,9 @@ When you get access to a new computer server, you may want to run some commands 
 
 
 
-## Install CUDA
+## Install CUDA in Rocks 6 (CentOS 6)
+
+Update: it is much more straightforward in Rocks 7 to use CUDA and tensorflow and I suggest that you update to Rocks 7 if you use a lot of deep learning.
 
 For machines equipped with NVIDIA GPU, you may want to install CUDA for GPU computing. Below is a general procedure to do that in a Rocks 6.2 system (with Centos 6).
 
@@ -54,7 +56,7 @@ For machines equipped with NVIDIA GPU, you may want to install CUDA for GPU comp
 ```
 
 
-## install tensorflow
+## install tensorflow in Rocks 6 (CentOS 6)
 
 Tensorflow is useful for deep learning, and in our experience, the user interface and usability is far better than Torch or Theano. The default instruction does not work since Centos 6 does not support glibc2.15, which is required by tensorflow. (glibc2.15 rpm is only available in Centos 7). See below for the typical error message.
 
@@ -278,7 +280,7 @@ Type `google-chrome` to launch the browser.
 
 # install MongoDB in Rocks 7 (CentOS 7) to work with PHP
 
-The procedure below describes my journal to set up PHP-based web server under Rocks 7 that uses MongoDB. It is not straightforward and I hope that I remember everything that I have done, but I may have missed something below.
+The procedure below describes my journey to set up PHP-based web server under Rocks 7 that uses MongoDB. It is not straightforward and I hope that I remember everything that I have done, but I may have missed something below.
 
 First, install MongoDB. Just follow standard instructions at https://docs.mongodb.com/v3.2/tutorial/install-mongodb-on-red-hat/. Remember CentoOS is based on RedHat, so the same procedure works. Note that by default "SELINUX=disabled" in Rocks, but it may not be the case in typical CentOS. Make sure to run `service mongod start` to start the service. Unlike previous versions of CentOS, the `chkconfig` command only works for SysV services now, and you need to use `systemctl` for other services. But anyway, if you just run `chkconfig mongod on`, it will automatically re-direct the command to `systemctl enable mongod.service` to make sure that mongod service runs when the computer restarts. 
 
