@@ -255,7 +255,9 @@ Now do this:
 
 Note that the 128.125.249.xxx is the gateway address, which needs to be specified correctly. If you do not know what is the gateway, check the head node's gateway using the `route` command. This information by design was not included in the subnet set up (so `rocks list network` will not show it), and needs to be provided by users instead.
 
-Now compute-0-0 can access internet directly through eth1.
+Now compute-0-0 can access internet directly through eth1. If not, try do it manually in compute-0-0 by `route add default gw 10.30.10.254`.
+
+To remove a route (sometimes you may want to change a route, but there is no way to do `rocks set host route` in my experience, and you have to remove and add back a route), use `rocks remove host route compute-0-0 address=0.0.0.0`. Other syntax does not work.
 
 ## 10G ethernet specific settings
 
