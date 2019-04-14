@@ -498,6 +498,15 @@ When doing `qconf -mc`, we can use below for h_vmem, so that each node can handl
 h_vmem              h_vmem     MEMORY      <=    YES         YES        4G       0
 ```
 
+## enable job submission in compute node
 
+By default, only the head node can submit jobs. However, many bioinformatics software tools today handle job submission from compute nodes (an example is `canu` for genome assembly). So ideally all compute node can be job submission node as well. This needs to be set up manually for each node, and then reinstall the node.
+
+```
+[root@biocluster ~]# rocks list host attr compute-0-39 | grep submit_host
+[root@biocluster ~]# rocks set host attr compute-0-39 submit_host true
+[root@biocluster ~]# rocks set host boot compute-0-39 action=install
+[root@biocluster ~]# ssh compute-0-39 reboot
+```
 
 
