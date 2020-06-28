@@ -45,6 +45,8 @@ Finally, do not set up iptables (`/etc/iptables`) yourself for the same reasons.
 
 ## Adding infiniband to a system
 
+The following description only applies to version 6. It seems that Rocks 7 automatically handles these types of issues.
+
 By default, if an infiniband card is already present in the system, then IB-related packages (such as opensm and ibutils and drivers) will be installed automatically by Rocks. However, occasionally this is not the case, and sometimes you may want to add IB to an existing Rocks installation. How shall we address this?
 
 I found that simply doing `yum install openib ibutils infiniband-diags opensm` does not solve the problem per se. I still get an error `umad_init: can't read ABI version from /sys/class/infiniband_mad/abi_version` if I run `service openibd restart; service opensmd restart` followed by `ibhosts`. This occurs in some systems, but not other systems.
