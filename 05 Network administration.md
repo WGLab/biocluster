@@ -261,7 +261,7 @@ Now compute-0-0 can access internet directly through eth1. If not, try do it man
 
 To remove a route (sometimes you may want to change a route, but there is no way to do `rocks set host route` in my experience, and you have to remove and add back a route), use `rocks remove host route compute-0-0 address=0.0.0.0`. Other syntax does not work.
 
-In 2020, I found out that after adding a public interface to a computer node, I still cannot ssh into this node. I believe it is a routing issue that binds the default route to `eno1` (first ethernet adapter in this particular machine). I cannot use Rocks command to sovle this issue. Instead, I first `route del default` to delete the existing external route that goes through eno1. I used `route add default gw 10.30.10.254 eno2` (note that this 10.30.10.254 is also the default gateway in head node). The results are:
+In 2020, I found out that after adding a public interface to a computer node, I still cannot ssh into this node directly from the outside world. I believe it is a routing issue that binds the default route to `eno1` (first ethernet adapter in this particular machine). Initially, I followed manual but still cannot use Rocks command to solve this issue. Instead, I first `route del default` to delete the existing external route that goes through eno1. I used `route add default gw 10.30.10.254 eno2` (note that this 10.30.10.254 is also the default gateway in head node). The results are:
 ```
 [root@compute-0-0 ~]# route
 Kernel IP routing table
@@ -281,7 +281,7 @@ link-local      0.0.0.0         255.255.0.0     U     1004   0        0 ib0
 
 Now I can ping google.com correctly now. Now I can log into this machine remotely directly so this is the biocluster2 machine. However, this is not the perfect solution, because whenever compute-0-0 reinstalls, this change will be lost.
 
-I finally solved the problem by assigning the gateway to both 0.0.0.0 and default.
+I finally solved the problem by assigning the gateway IP to both 0.0.0.0 and default (if I only set up one of them, the system does not work).
 
 ```
 [root@biocluster ~]# rocks add host route compute-0-0 0.0.0.0 10.30.10.254 netmask=0.0.0.0
@@ -290,8 +290,6 @@ I finally solved the problem by assigning the gateway to both 0.0.0.0 and defaul
 ```
 
 Using `route` command, I can see that default is bound to eno2 (the second ethernet interface). Using `traceroute google.com` in compute-0-0, I can see that the network traffic does not go through head node. So this seems to be a somewhat awkward solution but it works in the end. (No other method works as I have tried many times after reading through the manaul and google for a long time.)
-
-
 
 
 ## 10G ethernet specific settings
