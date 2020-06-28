@@ -54,7 +54,7 @@ Typically, the nas-0-0 will have 6, 12 or more cores, so it is totally fine to s
 Some of the following points can be used to improve performance:
 
 1. Add 'RPCNFSDCOUNT=64' in `/etc/sysconfig/nfs` as mentioned above
-2. In head node, Modify ``/etc/auto.master`. In the line `/home auto.home`. Remove `--timeout 1200`, add `rsize=32768,wsize=32768,hard,intr`. Since IB traffic is used for NFS, here we set up very large rsize and wsize values.
+2. In head node, Modify `/etc/auto.master`. In the line `/home auto.home`. Remove `--timeout 1200`, add `rsize=32768,wsize=32768,hard,intr`. Since IB traffic is used for NFS, here we set up very large rsize and wsize values.
 3. Reload config info (`service autofs reload`)
 4. You may want to tune LSI RAID card parameters as well to improve read/write performance. The following command ensures write-back, read-ahead, and use cache even if a bad battery is encountered (the latest generation of card no longer use battery though).
 
@@ -150,6 +150,8 @@ dm-0              0.00     0.00  175.33  122.73    19.89    31.45   352.72     2
 
 Filesystem:               rMB_nor/s    wMB_nor/s    rMB_dir/s    wMB_dir/s    rMB_svr/s    wMB_svr/s     ops/s    rops/s    wops/s
 ```
+
+To further diagnose which processes are responsible for high wait time in CPU usage, you can do a `yum install iotop`, and then use the iotop program to check the IO usage of various programs.
 
 ## Fix autofs issues
 
