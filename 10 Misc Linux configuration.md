@@ -298,7 +298,7 @@ Finally, do a `service httpd restart`. Then check a random page that has `<?php 
 
 The rocks head node may not load and enters into Dracut Emergency Shell. This happens whether you boot regularly, or boot into rescue mode. This happens when rocks disk sections cannot be correctly loaded. An example screen is given below:
 
-![dracut](img/dracut_message.png).
+![dracut](https://user-images.githubusercontent.com/5926328/85936850-6543c200-b8cc-11ea-8b1a-a32b76329f24.png).
 
 At this point, you are within dracut shell, and the `/root` and `/swap` logical volume cannot be mounted in the system. To fix this, type `lvm` and enter the lvm shell. There are a number of commands to use to examine the status, including `vgscan`, `lvscan`, `pvscan`, `vgdisplay`, `lvdisplay`, `pvdisplay`, `lvs`, etc. 
 
