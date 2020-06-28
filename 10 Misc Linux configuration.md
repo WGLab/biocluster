@@ -294,6 +294,19 @@ Then add the two `[MongoDB] extension=mongo.so` lines to `/etc/php.ini`. Again, 
 
 Finally, do a `service httpd restart`. Then check a random page that has `<?php phpinfo() ?>` in it, to see if mongo is now loaded to PHP.
 
+# handling dracut emergency shell
+
+The rocks head node may not load and enters into Dracut Emergency Shell. This happens whether you boot regularly, or boot into rescue mode. This happens when rocks disk sections cannot be correctly loaded. An example screen is given below:
+
+![dracut](img/dracut_message.png).
+
+At this point, you are within dracut shell, and the `/root` and `/swap` logical volume cannot be mounted in the system. To fix this, type `lvm` and enter the lvm shell. There are a number of commands to use to examine the status, including `vgscan`, `lvscan`, `pvscan`, `vgdisplay`, `lvdisplay`, `pvdisplay`, `lvs`, etc. 
+
+If you see "inactive" when running `lvscan`, this means the logical volumes are not activated, so that the boot loader cannot boot into Rocks. 
+
+To address the problem, run `lvchange -a y --select vg_uuid=mVcL2z-y1ll-k7Ly-PLR0-Cu7R-f7IF-5Zzn70 #UUID/root`, and then check the status using `lvscan` now. The reason I use vg_uuid is because there are two volume groups in the system with identical names (because I added one disk into the system), resulting on conflict. I got the vg_uuid using the `pvscan` command. Note that within dracut shell, you cannot change name of volume group as it is locked in read only mode.
+
+Now exit the lvm shell. At this time, you are back into dracut shell. Do not type `reboot`, otherwise all your changes will be lost. Instead, simply exit the dracut shell by `exit`, and then Rocks will continue boot.
 
 
 
