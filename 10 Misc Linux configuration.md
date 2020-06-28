@@ -296,7 +296,7 @@ Finally, do a `service httpd restart`. Then check a random page that has `<?php 
 
 # handling dracut emergency shell
 
-The rocks head node may not load and enters into Dracut Emergency Shell. This happens whether you boot regularly, or boot into rescue mode. This happens when rocks disk sections cannot be correctly loaded. An example screen is given below:
+The rocks head node may not load and enters into Dracut Emergency Shell. This happens whether you boot regularly, or boot into rescue mode. This happens when rocks disk sections cannot be correctly loaded. Dracut is a low-level tool for generating an initramfs/initrd image (initrd and initramfs refer to slightly different schemes for loading this file system into memory), and official documentation on dracut is given [here](https://mirrors.edge.kernel.org/pub/linux/utils/boot/dracut/dracut.html). An example screen is given below:
 
 ![dracut](https://user-images.githubusercontent.com/5926328/85936850-6543c200-b8cc-11ea-8b1a-a32b76329f24.png).
 
