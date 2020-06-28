@@ -277,7 +277,18 @@ link-local      0.0.0.0         255.255.0.0     U     1004   0        0 ib0
 255.255.255.255 0.0.0.0         255.255.255.255 UH    0      0        0 eno1
 ```
 
-Now I can ping google.com correctly now. Now I can log into this machine remotely directly so this is the biocluster2 machine.
+Now I can ping google.com correctly now. Now I can log into this machine remotely directly so this is the biocluster2 machine. However, this is not the perfect solution, because whenever compute-0-0 reinstalls, this change will be lost.
+
+I finally solved the problem by assigning the gateway to both 0.0.0.0 and default.
+
+```
+[root@biocluster ~]# rocks add host route compute-0-0 0.0.0.0 10.30.10.254 netmask=0.0.0.0
+[root@biocluster ~]# rocks add host route compute-0-0 default 10.30.10.254 netmask=0.0.0.0
+[root@biocluster ~]# rocks sync host network compute-0-0
+```
+
+Using `route` command, I can see that default is bound to eno2 (the second ethernet interface). Using `traceroute google.com` in compute-0-0, I can see that the network traffic does not go through head node. So this seems to be a somewhat awkward solution but it works in the end. (No other method works as I have tried many times after reading through the manaul and google for a long time.)
+
 
 
 
