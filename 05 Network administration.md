@@ -215,9 +215,19 @@ To allow LAN nodes with private IP addresses to communicate with external public
 iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE 
 ```
 
-The rule uses the NAT packet matching table (`-t nat`) and specifies the built-in POSTROUTING chain for NAT (`-A POSTROUTING`) on the firewall's external networking device (`-o eth0`).
+The rule uses the NAT packet matching table (`-t nat`) and specifies the built-in POSTROUTING chain for NAT (`-A POSTROUTING`) on the firewall's external networking device (`-o eth1`). Note that the `eth1` could be replaced by the actual name of the public interface such as `eno2`.
 
 If this works out well, try to add the command using `rocks add firewall`.
+
+It this does not work, it is possible that the kernel disabled ip forwarding. See below for an example. Consider adding it into `rc.d` so it is enabled during system restart.
+
+```
+[root@biocluster wangk]# cat /proc/sys/net/ipv4/ip_forward
+0
+[root@biocluster wangk]# echo "1" > /proc/sys/net/ipv4/ip_forward
+[root@biocluster wangk]# cat /proc/sys/net/ipv4/ip_forward
+1
+```
 
 ### Adding a ethernet adapter on a compute node to access Internet
 
