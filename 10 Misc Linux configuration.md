@@ -278,6 +278,55 @@ Then run `yum info google-chrome-stable` to make sure that the repo can be found
 
 Type `google-chrome` to launch the browser.
 
+# install Docker
+
+This cannot be easily done on all nodes in a computing cluster. I suggest that you specify a few large-memory machines, and ask everybody to use those machines if they must use docker.
+
+To install docker on a Rocks 7 Manzanita node, do not follow instructions in Docker website. That does not work with CentOS system here.
+
+Most likely first need to `yum install -y yum-utils` as yum-config-manager may not be available in the node.
+
+To add the docker repo to the yum repo list:
+```
+sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+```
+
+To install using yum:
+```
+# because older, noarch, version of centos, and this exact answer took a TON of digging.
+sudo yum install https://download.docker.com/linux/centos/7/x86_64/stable/Packages/docker-ce-17.12.1.ce-1.el7.centos.x86_64.rpm
+```
+
+If the above gives "container-selinux" must be version 2.9 and above error, you can install it from http://ftp.riken.jp/Linux/cern/centos/7/extras/x86_64/Packages/container-selinux-2.9-4.el7.noarch.rpm first. Do not install anything above 2.9 because most likely higher version will require many other extra packages.
+
+Then start the service:
+```
+sudo systemctl enable docker
+sudo systemctl start docker
+```
+
+Then make a `docker` group and add users:
+
+```
+sudo groupadd docker # if it does not already exist ofc
+sudo usermod -aG docker $USER
+```
+
+Alternative way to set up user and group is to do it in head node, and then run a 'rocks sync users' so everything can be synchronized.
+
+In principle, the procedure that I described above are strightforward and should be able to be included in a extend-compute.xml file for boostrapping the Linux operating system. I just never tested it before I only use a number of large-memory machines to run docker.
+
+
+Next, run
+
+```
+docker run hello-world
+```
+
+to ensure that things are working correctly.
+
+
+
 # install MongoDB in Rocks 7 (CentOS 7) to work with PHP
 
 The procedure below describes my journey to set up PHP-based web server under Rocks 7 that uses MongoDB. It is not straightforward and I hope that I remember everything that I have done, but I may have missed something below.
