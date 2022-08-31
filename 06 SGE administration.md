@@ -1,6 +1,6 @@
 ## Introduction
 
-Sun Grid Engine is a job scheduling system that is widely used in computing clusters today. Users should use use `qmon` (configure SGE by GUI) and `qconf` (configure SEG by command line) to configure SGE.
+Sun Grid Engine is a job scheduling system that is widely used in computing clusters today. Users should use use `qmon` (configure SGE by GUI) and `qconf` (configure SGE by command line) to configure SGE.
 
 ## Detailed Reference
 
