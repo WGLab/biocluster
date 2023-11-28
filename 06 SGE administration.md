@@ -194,6 +194,19 @@ cd $SGE_ROOT/default/common/
 Before you restart the master, make sure you don't have any old  
 sge_qmaster or sge_schedd processes hanging around.
 
+Sometimes the above commands do not work
+```
+[wangk@biocluster common]$ ./sgemaster start
+sge_qmaster didn't start!
+This is not a qmaster host!
+Check your /opt/gridengine/default/common/act_qmaster file!
+```
+
+```
+[wangk@biocluster ~]$ qstat -f
+error: unable to read qmaster name: qmaster hostname in "/opt/gridengine/default/common/act_qmaster" has zero length
+```
+For strange reasons, this file becomes empty. To solve the issue, simply put the hostname into this file, and then run the `sgemaster start` and `sgeexecd start` again.
 
 ## Fair share policy
 
